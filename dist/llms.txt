@@ -1,0 +1,28 @@
+# Intellect AI
+
+> Free guides, copy-ready prompts and example conversations for nine AI coaching personas (Business Mentor, Money Coach, Productivity Coach, Mindfulness Guide, Psychologist, Negotiator, Language Tutor, Leadership Mentor, Science Explainer). Made by the team behind Zehn, a book-summary app by Safari Group. Available in English, Russian and Arabic.
+
+Key facts about Zehn: 10,000+ book summaries, 15-20 minutes a book (audio and text), Ask AI on every book, and an AI Chat tab with the nine personas above and a model picker (Claude, Gemini, DeepSeek, Grok; all four on the yearly plan, one on the monthly plan). Free plan: 1 book a day, no AI. Zehn Pro: $9.99/month or $36/year with a 7-day free trial. 50,000+ readers. iOS: https://apps.apple.com/app/id6759160035 Android: https://play.google.com/store/apps/details?id=com.audiobook.zehn
+
+The AI Psychologist and Mindfulness Guide are self-help tools, not therapy or medical advice. The Money Coach is not financial advice.
+
+## Coaches (English)
+- [AI Business Mentor](https://intellectai.app/en/business-mentor/): Test ideas, price offers and plan the next 90 days of a small business.
+- [AI Money Coach](https://intellectai.app/en/money-coach/): Build a budget you can keep, pay off debt and start saving.
+- [AI Productivity Coach](https://intellectai.app/en/productivity-coach/): Plan your day, beat procrastination and protect time for deep work.
+- [AI Mindfulness Guide](https://intellectai.app/en/mindfulness-guide/): Short breathing, grounding and reflection exercises for busy days.
+- [AI Psychologist persona](https://intellectai.app/en/psychologist/): Talk through stress, conflicts and habits in a calm, structured way.
+- [AI Negotiator](https://intellectai.app/en/negotiator/): Prepare for salary talks, rent, deals and difficult conversations.
+- [AI Language Tutor](https://intellectai.app/en/language-tutor/): Practise conversation, fix mistakes and learn words you'll actually use.
+- [AI Leadership Mentor](https://intellectai.app/en/leadership-mentor/): Give feedback, run better meetings and lead a team with confidence.
+- [AI Science Explainer](https://intellectai.app/en/science-explainer/): Understand science, health news and big ideas in plain words.
+
+## Other pages
+- [All prompts](https://intellectai.app/en/prompts/): 108 free prompts, 12 per coach
+- [Russian version](https://intellectai.app/ru/)
+- [Arabic version](https://intellectai.app/ar/)
+- [Privacy](https://intellectai.app/en/privacy/)
+
+## Contact
+- contact@safarigrp.com
+- Zehn website: https://thezehnapp.com/
