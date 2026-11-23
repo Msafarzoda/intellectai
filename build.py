@@ -27,7 +27,30 @@ def load(lang):
 
 
 L = {lang: load(lang) for lang in C.LANGS}
+G = {lang: load(f"guides_{lang}") for lang in C.LANGS}
+BOOKS = json.load(open(os.path.join(ROOT, "content", "books.json"), encoding="utf-8"))
 e = lambda s: html.escape(s, quote=True)  # noqa: E731
+SOCIAL = [("X", "https://x.com/thezehnapp"), ("Instagram", "https://www.instagram.com/thezehnapp/"), ("YouTube", "https://www.youtube.com/@thezehnapp")]
+
+
+def md(s):
+    """Escape, then **bold** and [text](url)."""
+    s = e(s)
+    s = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", s)
+    return re.sub(r"\[([^\]]+)\]\(([^)\s]+)\)", lambda m: f'<a href="{m.group(2)}"{" rel=\"noopener\"" if m.group(2).startswith("http") and "intellectai.app" not in m.group(2) else ""}>{m.group(1)}</a>', s)
+
+
+def plain(s):
+    return re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", s).replace("**", "")
+
+
+def gpath(slug, g):
+    return g.get("path") or f"guides/{slug}/"
+
+
+def all_guides(lang):
+    gm = G[lang]
+    return list(gm.GUIDES.items()) + list(gm.ZEHN.items())
 
 
 def url(lang, path=""):
@@ -84,13 +107,13 @@ def site_ld():
 def zehn_ld(lang):
     return {"@type": "MobileApplication", "name": "Zehn", "operatingSystem": "iOS, Android",
             "applicationCategory": "EducationApplication", "url": f"{C.ZEHN}/{lang}/",
-            "sameAs": [C.APP_STORE, C.GOOGLE_PLAY],
+            "sameAs": [C.APP_STORE, C.GOOGLE_PLAY] + [u for _, u in SOCIAL],
             "publisher": {"@type": "Organization", "name": "Safari Group"}}
 
 
 def faq_ld(faq):
     return {"@type": "FAQPage", "mainEntity": [
-        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]}
+        {"@type": "Question", "name": plain(q), "acceptedAnswer": {"@type": "Answer", "text": plain(a)}} for q, a in faq]}
 
 
 def crumbs_ld(items):
@@ -150,9 +173,10 @@ def header(lang, path):
     ui = L[lang].UI
     langs = "".join(f'<a href="/{x}/{path}" hreflang="{x}" lang="{x}"{" aria-current=\"true\"" if x == lang else ""}>{x.upper()}</a>' for x in C.LANGS)
     return f"""<header class="top"><div class="wrap">
-<a class="brand" href="/{lang}/">{LOGO}<span>Intellect AI</span></a>
+<a class="brand" href="/{lang}/" aria-label="Intellect AI">{LOGO}<span>Intellect AI</span></a>
 <nav class="nav" aria-label="{e(ui['menu_label'])}">
 <a class="hide-s" href="/{lang}/#coaches">{e(ui['nav_coaches'])}</a>
+<a href="/{lang}/guides/">{e(G[lang].UI['nav_guides'])}</a>
 <a href="/{lang}/prompts/">{e(ui['nav_prompts'])}</a>
 <span class="langs" aria-label="{e(ui['lang_label'])}">{langs}</span>
 <a class="get hide-s" href="{C.ZEHN}/{lang}/">{e(ui['nav_get'])}</a>
@@ -163,16 +187,20 @@ def header(lang, path):
 def footer(lang):
     ui = L[lang].UI
     co = L[lang].COACHES
+    gu = G[lang].UI
     links = "".join(f'<li><a href="/{lang}/{s}/">{e(co[s]["name"])}</a></li>' for s, *_ in C.COACHES)
+    cats = "".join(f'<li><a href="/{lang}/guides/#{k}">{e(v[0])}</a></li>' for k, v in G[lang].CATS.items())
+    soc = "".join(f'<li><a href="{u}" rel="noopener">{n}</a></li>' for n, u in SOCIAL)
     return f"""</main>
 <footer><div class="wrap">
-<div><a class="brand" href="/{lang}/">{LOGO}Intellect AI</a><p style="margin-top:10px">{e(ui['footer_about'])}</p>
-<p><a href="mailto:{C.EMAIL}">{C.EMAIL}</a></p></div>
+<div><a class="brand" href="/{lang}/" aria-label="Intellect AI">{LOGO}Intellect AI</a><p style="margin-top:10px">{e(ui['footer_about'])}</p>
+<p><a href="mailto:{C.EMAIL}">{C.EMAIL}</a></p><b style="margin-top:14px">{e(gu['social_h'])}</b><ul class="soc">{soc}</ul></div>
 <div><b>{e(ui['nav_coaches'])}</b><ul>{links}</ul></div>
-<div><b>{e(ui['footer_links'])}</b><ul><li><a href="/{lang}/">{e(ui['home'])}</a></li><li><a href="/{lang}/prompts/">{e(ui['prompts_all'])}</a></li><li><a href="/{lang}/privacy/">{e(ui['privacy'])}</a></li><li><a href="{C.ZEHN}/{lang}/">Zehn</a></li></ul></div>
+<div><b>{e(gu['nav_guides'])}</b><ul>{cats}<li><a href="/{lang}/read-next/">{e(gu['quiz_nav'])}</a></li></ul></div>
+<div><b>{e(ui['footer_links'])}</b><ul><li><a href="/{lang}/">{e(ui['home'])}</a></li><li><a href="/{lang}/prompts/">{e(ui['prompts_all'])}</a></li><li><a href="/{lang}/about/">{e(gu['about'])}</a></li><li><a href="/{lang}/privacy/">{e(ui['privacy'])}</a></li><li><a href="/{lang}/zehn/">Zehn</a></li></ul></div>
 <div class="copy">{e(ui['footer_brand'])} · © 2026</div>
 </div></footer>
-<script>document.addEventListener("click",function(v){{var b=v.target.closest(".cp");if(!b)return;var t=b.parentNode.querySelector(".pt").textContent;navigator.clipboard.writeText(t).then(function(){{b.textContent=b.dataset.ok;b.classList.add("ok");setTimeout(function(){{b.textContent=b.dataset.l;b.classList.remove("ok")}},1600)}})}});</script>
+<script>document.addEventListener("click",function(v){{var f=v.target.closest(".fchip");if(f){{var k=f.dataset.k;document.querySelectorAll(".fchip").forEach(function(x){{x.setAttribute("aria-pressed",x===f)}});document.querySelectorAll(".pgroup").forEach(function(g){{g.hidden=!(k==="all"||g.dataset.k===k)}});return}}var b=v.target.closest(".cp");if(!b)return;var t=b.parentNode.querySelector(".pt").textContent;navigator.clipboard.writeText(t).then(function(){{b.textContent=b.dataset.ok;b.classList.add("ok");setTimeout(function(){{b.textContent=b.dataset.l;b.classList.remove("ok")}},1600)}})}});</script>
 </body></html>"""
 
 
@@ -260,6 +288,7 @@ def build_home(lang):
 <section><div class="wrap narrow"><h2>{e(h['how_h'])}</h2><ol class="steps">{steps}</ol></div></section>
 <section><div class="wrap"><div class="zband"><div><h2>{e(h['zehn_h'])}</h2><p>{e(h['zehn_p'])} <a class="ln" style="color:var(--mint)" href="{C.ZEHN}/{lang}/ask-ai/">{e(h['askai_link'])}</a></p>
 {stores(ui)}<p class="price">{e(ui['pricing'])}</p></div><div class="facts">{facts}</div></div></div></section>
+{home_guides(lang)}
 <section class="faq"><div class="wrap narrow"><h2>{e(ui['faq_h'])}</h2>{faq}</div></section>"""
     write(f"{lang}/index.html", head(lang, h["title"], h["desc"], "", ld) + header(lang, "") + body + footer(lang))
 
@@ -326,9 +355,12 @@ def build_prompts(lang):
     groups = ""
     for s, *_ in C.COACHES:
         c = m.COACHES[s]
-        li = "".join(f'<li><p class="pt">{e(x)}</p><button class="cp" type="button" data-l="{e(ui["copy"])}" data-ok="{e(ui["copied"])}">{e(ui["copy"])}</button></li>' for x in c["prompts"][:3])
-        groups += (f'<div class="pgroup"><h2>{badge(s)}<a href="/{lang}/{s}/" style="color:inherit;text-decoration:none">{e(c["name"])}</a></h2>'
-                   f'<ol class="plist">{li}</ol><p style="margin-top:10px"><a href="/{lang}/{s}/#prompts">{e(p["see_all"])} →</a></p></div>')
+        li = "".join(f'<li><p class="pt">{e(x)}</p><button class="cp" type="button" data-l="{e(ui["copy"])}" data-ok="{e(ui["copied"])}">{e(ui["copy"])}</button></li>' for x in c["prompts"])
+        groups += (f'<div class="pgroup" data-k="{s}"><h2>{badge(s)}<a href="/{lang}/{s}/" style="color:inherit;text-decoration:none">{e(c["name"])}</a></h2>'
+                   f'<ol class="plist">{li}</ol><p style="margin-top:10px"><a href="/{lang}/{s}/">{e(p["see_all"])} →</a></p></div>')
+    chips = f'<button class="fchip" type="button" data-k="all" aria-pressed="true">{e(p["filter_all"])}</button>' + "".join(
+        f'<button class="fchip" type="button" data-k="{s}" aria-pressed="false">{C.icon(ik)}{e(m.COACHES[s]["name"])}</button>' for s, _, ik, _ in C.COACHES)
+    groups = f'<div class="filters" role="group" aria-label="{e(p["filter_label"])}">{chips}</div>' + groups
     body = f"""<div class="wrap narrow page">
 <nav class="crumbs" aria-label="breadcrumb"><ol><li><a href="/{lang}/">{e(ui['home'])}</a></li><li aria-current="page">{e(p['h1'])}</li></ol></nav>
 <h1 style="margin-top:18px">{e(p['h1'])}</h1><p class="lead">{e(p['lead'])}</p>
@@ -374,8 +406,183 @@ def build_404():
     write("404.html", page + header("en", "") + body + footer("en"))
 
 
+CLUB_LOGO = ('<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 30c-8-1-12-7-12-15 8 0 12 6 12 15zm0 0c8-1 12-7 12-15-8 0-12 6-12 15z" fill="none" stroke="#5be26a" stroke-width="3" stroke-linejoin="round"/>'
+             '<path d="M14 40c6-4 12 4 18 0s12-4 18 0M14 48c6-4 12 4 18 0s12-4 18 0" fill="none" stroke="#5be26a" stroke-width="3" stroke-linecap="round"/></svg>')
+
+
+def club_ui(lang):
+    """HTML rebuild of a Zehn Book Club screen (layout from assets/app_ui_and_CTA/book_club_ui/club_calm_club.webp).
+    App chrome stays English like the real app. No member count, no real user's post: an example post only."""
+    gu = G[lang].UI
+    post_t, post_b = gu["club_post"]
+    rtl = ' dir="rtl"' if lang == "ar" else ""
+    return f"""<figure class="uifig"><div class="phone" role="img" aria-label="Zehn Book Club"><div class="scr club" aria-hidden="true"><div class="isl"></div>
+<div class="st"><span>9:41</span><span>5G</span></div>
+<div class="cbar"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span class="lb"><svg viewBox="0 0 24 24"><path d="M4 20h16M7 20v-5h4v5M13 20V11h4v9M12 3l1 2 2 .3-1.5 1.4.4 2.1L12 8l-1.9.8.4-2.1L9 5.3l2-.3z"/></svg></span></div>
+<div class="cover">{CLUB_LOGO}<i></i><b>Calm Club</b></div>
+<div class="crow"><b>Calm Club</b><span class="pill">Mindfulness &amp; Happiness</span><span class="pill">Leave</span></div>
+<p class="cdesc">A quieter club. Focus, attention, and doing less but better.</p>
+<div class="rules"><b>Club Rules:</b><span>Read the rules of this club before participating…</span></div>
+<div class="comp"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/></svg>What’s on your mind today?</div>
+<div class="ctabs"><span class="on">Posts</span><span>Challenges</span></div>
+<div class="post"><small>{e(gu['club_member'])}</small><span class="pill sm">Calm Club</span><b{rtl}>{e(post_t)}</b><p{rtl}>{e(post_b)}</p><span class="cm">Comments</span></div>
+</div></div><figcaption class="cap">{e(gu['ui_cap_club'])}</figcaption></figure>"""
+
+
+def blocks(lang, items):
+    out = []
+    for b in items:
+        if isinstance(b, str):
+            out.append(f"<p>{md(b)}</p>")
+            continue
+        k = b[0]
+        if k in ("ul", "ol"):
+            out.append(f'<{k} class="gl">' + "".join(f"<li>{md(x)}</li>" for x in b[1]) + f"</{k}>")
+        elif k == "table":
+            hd = "".join(f"<th scope=\"col\">{md(x)}</th>" for x in b[1])
+            rows = "".join("<tr>" + "".join(f"<td>{md(c)}</td>" for c in r) + "</tr>" for r in b[2])
+            out.append(f'<div class="tbl"><table><thead><tr>{hd}</tr></thead><tbody>{rows}</tbody></table></div>')
+        elif k == "tip":
+            out.append(f'<div class="note info"><p>{md(b[1])}</p></div>')
+        elif k == "prompt":
+            ui = L[lang].UI
+            out.append(f'<ol class="plist one"><li><p class="pt">{e(b[1])}</p><button class="cp" type="button" data-l="{e(ui["copy"])}" data-ok="{e(ui["copied"])}">{e(ui["copy"])}</button></li></ol>')
+        elif k == "ui":
+            out.append(club_ui(lang) if b[1] == "club" else '<figure class="uifig">' + phone(lang, L[lang].HOME) + "</figure>")
+    return "".join(out)
+
+
+def gwords(g):
+    txt = " ".join([g["lead"]] + g["tldr"] + [x for _, bl in g["sections"] for b in bl for x in ([b] if isinstance(b, str) else (b[1] if isinstance(b[1], list) else [b[1]]) + [c for r in (b[2] if b[0] == "table" else []) for c in r])] + [q + " " + a for q, a in g["faq"]])
+    return words(txt)
+
+
+def guide_card(lang, k, g):
+    gu = G[lang].UI
+    cat = G[lang].CATS[g["cat"]][0]
+    return (f'<a class="card" href="/{lang}/{gpath(k, g)}"><span class="kicker">{e(cat)}</span><h3>{e(g["h1"])}</h3>'
+            f'<p>{e(g["desc"])}</p><span class="more">{e(gu["read_min"].format(n=max(3, round(gwords(g) / 220))))} →</span></a>')
+
+
+def home_guides(lang):
+    gu, q = G[lang].UI, G[lang].QUIZ
+    picks = ["read-more-books", "how-to-start-a-book-club", "learn-a-language-with-ai", "what-is-zehn", "remember-what-you-read"]
+    ag = dict(all_guides(lang))
+    cards = "".join(guide_card(lang, k, ag[k]) for k in picks)
+    quiz = (f'<a class="card quizcard" href="/{lang}/read-next/"><span class="kicker">Quiz</span><h3>{e(q["h1"])}</h3>'
+            f'<p>{e(q["lead"])}</p><span class="more">{e(q["show"])} →</span></a>')
+    return f"""<section class="alt"><div class="wrap"><h2>{e(gu['home_guides_h'])}</h2><p class="lead">{e(gu['home_guides_p'])}</p>
+<div class="grid">{quiz}{cards}</div><p style="margin-top:18px"><a href="/{lang}/guides/">{e(gu['all_guides'])} →</a></p></div></section>"""
+
+
+def build_guide(lang, k, g):
+    ui, gu = L[lang].UI, G[lang].UI
+    path = gpath(k, g)
+    check_faq(f"guide {k}", lang, g["faq"])
+    n = gwords(g)
+    if n < (700 if lang == "en" else 550):
+        WARN.append(f"thin guide {lang}/{k}: {n} words")
+    cat = G[lang].CATS[g["cat"]][0]
+    ld = [org_ld(), site_ld(),
+          {"@type": "Article", "@id": url(lang, path) + "#article", "headline": g["h1"], "description": g["desc"], "inLanguage": lang,
+           "url": url(lang, path), "mainEntityOfPage": url(lang, path), "image": f"{C.BASE}/og/og-{lang}.jpg", "wordCount": n,
+           "datePublished": PUBLISHED, "dateModified": MODIFIED, "author": {"@id": ORG_ID}, "publisher": {"@id": ORG_ID},
+           "isPartOf": {"@id": SITE_ID}, "articleSection": cat, **({"about": zehn_ld(lang)} if g["cat"] == "zehn-guides" else {})},
+          faq_ld(g["faq"]),
+          crumbs_ld([(ui["home"], url(lang)), (gu["nav_guides"], url(lang, "guides/")), (g["h1"], url(lang, path))])]
+    secs = "".join(f'<section><h2>{e(h)}</h2>{blocks(lang, bl)}</section>' for h, bl in g["sections"])
+    faq = "".join(f"<h3>{e(q)}</h3><p>{md(a)}</p>" for q, a in g["faq"])
+    ch, cp = g.get("cta") or (gu["cta_default_h"], gu["cta_default_p"])
+    ag = dict(all_guides(lang))
+    rel = "".join(guide_card(lang, r, ag[r]) for r in g["related"] if r in ag)
+    body = f"""<div class="wrap narrow page">
+<nav class="crumbs" aria-label="breadcrumb"><ol><li><a href="/{lang}/">{e(ui['home'])}</a></li><li><a href="/{lang}/guides/#{g['cat']}">{e(cat)}</a></li><li aria-current="page">{e(g['h1'])}</li></ol></nav>
+<h1 style="margin-top:18px">{e(g['h1'])}</h1>
+<p class="muted">{e(gu['read_min'].format(n=max(3, round(n / 220))))} · {e(gu['updated'])}: {e(G[lang].DATE)}</p>
+<p class="lead">{md(g['lead'])}</p>
+{tldr(ui, g['tldr'])}
+{secs}
+<section><div class="cta"><h2>{e(ch)}</h2><p>{e(cp)}</p>{stores(ui)}<p class="price">{e(ui['pricing'])}</p></div></section>
+<section class="faq"><h2>{e(ui['faq_h'])}</h2>{faq}</section>
+<section><h2>{e(gu['related_h'])}</h2><div class="grid g2">{rel}</div></section>
+</div>"""
+    write(f"{lang}/{path}index.html", head(lang, g["title"], g["desc"], path, ld) + header(lang, path) + body + footer(lang))
+
+
+def build_guides_index(lang):
+    ui, gu = L[lang].UI, G[lang].UI
+    path = "guides/"
+    gs = all_guides(lang)
+    ld = [org_ld(), site_ld(),
+          {"@type": "CollectionPage", "url": url(lang, path), "name": gu["guides_h1"], "description": gu["guides_desc"], "inLanguage": lang, "isPartOf": {"@id": SITE_ID},
+           "hasPart": [{"@type": "Article", "url": url(lang, gpath(k, g)), "headline": g["h1"]} for k, g in gs]},
+          crumbs_ld([(ui["home"], url(lang)), (gu["nav_guides"], url(lang, path))])]
+    secs = ""
+    for ck, (cn, cd) in G[lang].CATS.items():
+        cards = "".join(guide_card(lang, k, g) for k, g in gs if g["cat"] == ck)
+        if ck == "reading-habits":
+            q = G[lang].QUIZ
+            cards += f'<a class="card quizcard" href="/{lang}/read-next/"><span class="kicker">Quiz</span><h3>{e(q["h1"])}</h3><p>{e(q["lead"])}</p><span class="more">{e(q["show"])} →</span></a>'
+        secs += f'<section id="{ck}"><h2>{e(cn)}</h2><p class="muted">{e(cd)}</p><div class="grid g2">{cards}</div></section>'
+    body = f"""<div class="wrap page" style="max-width:980px">
+<nav class="crumbs" aria-label="breadcrumb"><ol><li><a href="/{lang}/">{e(ui['home'])}</a></li><li aria-current="page">{e(gu['nav_guides'])}</li></ol></nav>
+<h1 style="margin-top:18px">{e(gu['guides_h1'])}</h1><p class="lead">{e(gu['guides_lead'])}</p>{tldr(ui, gu['guides_tldr'])}
+{secs}</div>"""
+    write(f"{lang}/{path}index.html", head(lang, gu["guides_title"], gu["guides_desc"], path, ld) + header(lang, path) + body + footer(lang))
+
+
+def build_about(lang):
+    ui, gu, a = L[lang].UI, G[lang].UI, G[lang].ABOUT
+    path = "about/"
+    ld = [org_ld(), site_ld(), {"@type": "AboutPage", "url": url(lang, path), "name": a["h1"], "inLanguage": lang, "isPartOf": {"@id": SITE_ID}, "about": {"@id": ORG_ID}},
+          crumbs_ld([(ui["home"], url(lang)), (a["h1"], url(lang, path))])]
+    secs = "".join(f"<h2 style='font-size:1.3rem;margin-top:26px'>{e(h)}</h2><p>{md(t)}</p>" for h, t in a["body"])
+    body = f"""<div class="wrap narrow page">
+<nav class="crumbs" aria-label="breadcrumb"><ol><li><a href="/{lang}/">{e(ui['home'])}</a></li><li aria-current="page">{e(a['h1'])}</li></ol></nav>
+<h1 style="margin-top:18px">{e(a['h1'])}</h1>{tldr(ui, a['tldr'])}{secs}
+<p><a href="mailto:{C.EMAIL}">{C.EMAIL}</a></p></div>"""
+    write(f"{lang}/{path}index.html", head(lang, a["title"], a["desc"], path, ld) + header(lang, path) + body + footer(lang))
+
+
+def build_quiz(lang):
+    ui, gu, q = L[lang].UI, G[lang].UI, G[lang].QUIZ
+    path = "read-next/"
+    check_faq("quiz", lang, q["faq"])
+    ld = [org_ld(), site_ld(),
+          {"@type": "WebApplication", "name": q["h1"], "url": url(lang, path), "applicationCategory": "EducationalApplication", "operatingSystem": "Any",
+           "isAccessibleForFree": True, "inLanguage": lang, "publisher": {"@id": ORG_ID}, "description": q["desc"]},
+          faq_ld(q["faq"]), crumbs_ld([(ui["home"], url(lang)), (q["h1"], url(lang, path))])]
+
+    def opts(name, items):
+        return "".join(f'<label class="opt"><input type="radio" name="{name}" value="{k}"{" checked" if i == 0 and name != "g" else ""}><span>{e(t)}</span></label>' for i, (k, t) in enumerate(items))
+    data = {k: v[lang] for k, v in BOOKS.items()}
+    tips = {"commute": q["tip_commute"], "evening": q["tip_evening"], "weekend": q["tip_weekend"]}
+    faq = "".join(f"<h3>{e(a)}</h3><p>{md(b)}</p>" for a, b in q["faq"])
+    js = ("var B=" + json.dumps(data, ensure_ascii=False) + ",T=" + json.dumps(tips, ensure_ascii=False) + ",M=" + json.dumps(q["minutes"], ensure_ascii=False)
+          + ",O=" + json.dumps(q["open"], ensure_ascii=False) + ";"
+          """var f=document.getElementById("qz"),r=document.getElementById("qr");f.addEventListener("submit",function(v){v.preventDefault();var d=new FormData(f),g=d.get("g");if(!g){f.querySelector("input[name=g]").focus();return}
+var b=B[g].slice();if(d.get("m")==="light")b.sort(function(x,y){return x.m-y.m});b=b.slice(0,3);var h="";b.forEach(function(x){h+='<li><a href="'+x.u+'" rel="noopener"><b></b><span></span><em></em></a></li>'});
+r.querySelector("ol").innerHTML=h;var li=r.querySelectorAll("li");b.forEach(function(x,i){li[i].querySelector("b").textContent=x.t;li[i].querySelector("span").textContent=x.a;li[i].querySelector("em").textContent=M.replace("{n}",x.m)+" · "+O+" →"});
+r.querySelector(".qtip").textContent=T[d.get("t")];r.hidden=false;r.scrollIntoView({behavior:"smooth",block:"start"});r.focus()});
+document.getElementById("qa").addEventListener("click",function(){r.hidden=true;f.reset();window.scrollTo({top:0,behavior:"smooth"})});""")
+    body = f"""<div class="wrap narrow page">
+<nav class="crumbs" aria-label="breadcrumb"><ol><li><a href="/{lang}/">{e(ui['home'])}</a></li><li aria-current="page">{e(q['h1'])}</li></ol></nav>
+<h1 style="margin-top:18px">{e(q['h1'])}</h1><p class="lead">{e(q['lead'])}</p>{tldr(ui, q['tldr'])}
+<form id="qz" class="quiz">
+<fieldset><legend>1. {e(q['q1'])}</legend><div class="opts">{opts('g', q['goals'])}</div></fieldset>
+<fieldset><legend>2. {e(q['q2'])}</legend><div class="opts">{opts('m', q['moods'])}</div></fieldset>
+<fieldset><legend>3. {e(q['q3'])}</legend><div class="opts">{opts('t', q['times'])}</div></fieldset>
+<button class="btn p" type="submit">{e(q['show'])}</button></form>
+<div id="qr" class="qres" hidden tabindex="-1"><h2>{e(q['result_h'])}</h2><ol class="books"></ol><p class="qtip muted"></p>
+{stores(ui)}<p class="price">{e(ui['pricing'])}</p><button id="qa" class="btn ghost" type="button">{e(q['again'])}</button></div>
+<section><h2>{e(q['more_h'])}</h2><p>{e(q['more_p'])}</p></section>
+<section class="faq"><h2>{e(ui['faq_h'])}</h2>{faq}</section></div>
+<script>{js}</script>"""
+    write(f"{lang}/{path}index.html", head(lang, q["title"], q["desc"], path, ld) + header(lang, path) + body + footer(lang))
+
+
 def build_seo():
-    pages = [""] + [s + "/" for s, *_ in C.COACHES] + ["prompts/", "privacy/"]
+    pages = [""] + [s + "/" for s, *_ in C.COACHES] + ["prompts/", "privacy/", "about/", "guides/", "read-next/"] + [gpath(k, g) for k, g in all_guides("en")]
     out = ['<?xml version="1.0" encoding="UTF-8"?>',
            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
            f"<url><loc>{C.BASE}/</loc><lastmod>{MODIFIED}</lastmod></url>"]
@@ -399,7 +606,12 @@ def build_seo():
     for s, *_ in C.COACHES:
         c = en.COACHES[s]
         lines.append(f"- [{c['h1']}]({url('en', s + '/')}): {c['short']}")
+    lines += ["", "## Guides (English)"]
+    for k, g in all_guides("en"):
+        lines.append(f"- [{g['h1']}]({url('en', gpath(k, g))}): {g['desc']}")
     lines += ["", "## Other pages", f"- [All prompts]({url('en', 'prompts/')}): 108 free prompts, 12 per coach",
+              f"- [What should I read next? quiz]({url('en', 'read-next/')}): 3 questions, 3 book picks from Zehn's library",
+              f"- [About Intellect AI]({url('en', 'about/')})",
               f"- [Russian version]({url('ru')})", f"- [Arabic version]({url('ar')})", f"- [Privacy]({url('en', 'privacy/')})",
               "", "## Contact", f"- {C.EMAIL}", f"- Zehn website: {C.ZEHN}/"]
     write("llms.txt", "\n".join(lines) + "\n")
@@ -496,6 +708,11 @@ def main():
             build_coach(lang, s)
         build_prompts(lang)
         build_privacy(lang)
+        build_about(lang)
+        build_guides_index(lang)
+        for k, g in all_guides(lang):
+            build_guide(lang, k, g)
+        build_quiz(lang)
     build_root()
     build_404()
     build_seo()

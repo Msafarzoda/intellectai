@@ -17,8 +17,23 @@ The AI Psychologist and Mindfulness Guide are self-help tools, not therapy or me
 - [AI Leadership Mentor](https://intellectai.app/en/leadership-mentor/): Give feedback, run better meetings and lead a team with confidence.
 - [AI Science Explainer](https://intellectai.app/en/science-explainer/): Understand science, health news and big ideas in plain words.
 
+## Guides (English)
+- [How to start a book club that lasts](https://intellectai.app/en/guides/how-to-start-a-book-club/): How to start a book club that lasts: size, roles, schedule, rules, picking books and running the first meeting. Works online and in person.
+- [Book club discussion questions for any book](https://intellectai.app/en/guides/book-club-discussion-questions/): Ready-to-use book club discussion questions for nonfiction and novels, plus how to use an AI coach to write questions for any book in minutes.
+- [Running a book club with summaries](https://intellectai.app/en/guides/book-club-with-summaries/): How busy book clubs use 15–20 minute summaries so everyone can join the discussion, when summaries help and when to read the whole book.
+- [How to read more books when you have no time](https://intellectai.app/en/guides/read-more-books/): Practical ways to read more books with a busy schedule: small daily slots, audio on the move, quitting bad books and using summaries to choose.
+- [How to remember what you read](https://intellectai.app/en/guides/remember-what-you-read/): Why we forget books and seven methods that help you remember what you read: retrieval practice, spacing, notes, teaching and quizzing yourself with AI.
+- [The 52 books a year reading challenge](https://intellectai.app/en/guides/52-books-a-year-reading-challenge/): Can you read 52 books in a year? The real maths, a weekly plan, a simple tracker and honest rules about audiobooks and summaries.
+- [How to learn a language with an AI tutor](https://intellectai.app/en/guides/learn-a-language-with-ai/): How to learn a language with an AI tutor: a daily 15-minute routine, the best prompts for speaking, writing and vocabulary, and what AI can't do for you.
+- [Claude vs Gemini vs DeepSeek vs Grok for learning](https://intellectai.app/en/guides/claude-vs-gemini-vs-deepseek-vs-grok/): Which AI model is best for learning? Claude, Gemini, DeepSeek and Grok compared for explanations, languages, maths and study, and how to test them.
+- [What is Zehn?](https://intellectai.app/en/zehn/): What Zehn is, who makes it and what it does: 15–20 minute book summaries, Ask AI on every book, an AI Chat with coaches, Book Club, languages and plans.
+- [How Zehn makes your day easier](https://intellectai.app/en/zehn/daily/): Seven everyday moments where Zehn helps: the commute, lunch, a meeting, a hard conversation, language practice, Sunday planning and winding down.
+- [The Zehn Book Club, explained](https://intellectai.app/en/zehn/book-club/): How the Book Club tab in the Zehn app works: join topic clubs, post your take on a book, reply to other readers and take part in club challenges.
+
 ## Other pages
 - [All prompts](https://intellectai.app/en/prompts/): 108 free prompts, 12 per coach
+- [What should I read next? quiz](https://intellectai.app/en/read-next/): 3 questions, 3 book picks from Zehn's library
+- [About Intellect AI](https://intellectai.app/en/about/)
 - [Russian version](https://intellectai.app/ru/)
 - [Arabic version](https://intellectai.app/ar/)
 - [Privacy](https://intellectai.app/en/privacy/)

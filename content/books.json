@@ -1,0 +1,612 @@
+{
+"focus": {
+"en": [
+{
+"t": "Deep Work",
+"a": "Cal Newport",
+"m": 17,
+"u": "https://thezehnapp.com/en/books/deep-work/"
+},
+{
+"t": "The Power of Habit",
+"a": "Charles Duhigg",
+"m": 18,
+"u": "https://thezehnapp.com/en/books/the-power-of-habit/"
+},
+{
+"t": "Getting Things DONE",
+"a": "David Allen",
+"m": 12,
+"u": "https://thezehnapp.com/en/books/getting-things-done/"
+},
+{
+"t": "Essentialism",
+"a": "Greg McKeown",
+"m": 15,
+"u": "https://thezehnapp.com/en/books/essentialism/"
+}
+],
+"ru": [
+{
+"t": "В работу с головой",
+"a": "Кэл Ньюпорт",
+"m": 24,
+"u": "https://thezehnapp.com/ru/books/book-1186/"
+},
+{
+"t": "Съешьте эту лягушку!",
+"a": "Брайан Трейси",
+"m": 25,
+"u": "https://thezehnapp.com/ru/books/book-1215/"
+},
+{
+"t": "Как привести дела в ПОРЯДОК",
+"a": "Дэвид Аллен",
+"m": 18,
+"u": "https://thezehnapp.com/ru/books/book-1237/"
+},
+{
+"t": "Цифровой минимализм",
+"a": "Кэл Ньюпорт",
+"m": 22,
+"u": "https://thezehnapp.com/ru/books/book-1205/"
+}
+],
+"ar": [
+{
+"t": "العمل العميق",
+"a": "Cal Newport",
+"m": 22,
+"u": "https://thezehnapp.com/ar/books/book-2391/"
+},
+{
+"t": "ابتلع الضفدع!",
+"a": "Brian Tracy",
+"m": 22,
+"u": "https://thezehnapp.com/ar/books/book-2398/"
+},
+{
+"t": "الجوهرية",
+"a": "Greg McKeown",
+"m": 19,
+"u": "https://thezehnapp.com/ar/books/book-2219/"
+},
+{
+"t": "التقليل الرقمي",
+"a": "Cal Newport",
+"m": 25,
+"u": "https://thezehnapp.com/ar/books/book-2392/"
+}
+]
+},
+"money": {
+"en": [
+{
+"t": "Rich dad Poor dad",
+"a": "Robert T. Kiyosaki",
+"m": 19,
+"u": "https://thezehnapp.com/en/books/rich-dad-poor-dad/"
+},
+{
+"t": "I Will Teach You to Be Rich",
+"a": "Ramit Sethi",
+"m": 24,
+"u": "https://thezehnapp.com/en/books/i-will-teach-you-to-be-rich/"
+},
+{
+"t": "The Simple Path to Wealth",
+"a": "J.L. Collins",
+"m": 24,
+"u": "https://thezehnapp.com/en/books/the-simple-path-to-wealth/"
+},
+{
+"t": "Die with Zero",
+"a": "Bill Perkins",
+"m": 23,
+"u": "https://thezehnapp.com/en/books/die-with-zero/"
+}
+],
+"ru": [
+{
+"t": "Я научу тебя быть богатым",
+"a": "Рамит Сети",
+"m": 17,
+"u": "https://thezehnapp.com/ru/books/book-1603/"
+},
+{
+"t": "Умри с нулём",
+"a": "Билл Перкинс",
+"m": 19,
+"u": "https://thezehnapp.com/ru/books/book-1589/"
+},
+{
+"t": "Просто продолжай покупать",
+"a": "Ник Маджулли",
+"m": 19,
+"u": "https://thezehnapp.com/ru/books/book-1605/"
+},
+{
+"t": "Случайная прогулка по Уолл-стрит",
+"a": "Бёртон Мэлкил",
+"m": 17,
+"u": "https://thezehnapp.com/ru/books/book-1582/"
+}
+],
+"ar": [
+{
+"t": "أسرار عقلية المليونير",
+"a": "T. Harv Eker",
+"m": 20,
+"u": "https://thezehnapp.com/ar/books/book-2330/"
+},
+{
+"t": "مُت بلا رصيد",
+"a": "Bill Perkins",
+"m": 21,
+"u": "https://thezehnapp.com/ar/books/book-2320/"
+},
+{
+"t": "القاعدة الأولى",
+"a": "Phil Town",
+"m": 21,
+"u": "https://thezehnapp.com/ar/books/book-1454/"
+},
+{
+"t": "فتاة ذكية في عالم المال",
+"a": "Bola Sokunbi",
+"m": 19,
+"u": "https://thezehnapp.com/ar/books/book-2319/"
+}
+]
+},
+"calm": {
+"en": [
+{
+"t": "The Power of Now",
+"a": "Eckhart Tolle",
+"m": 17,
+"u": "https://thezehnapp.com/en/books/the-power-of-now/"
+},
+{
+"t": "Ikigai",
+"a": "Hector Garcia, Francesc Miralles",
+"m": 16,
+"u": "https://thezehnapp.com/en/books/ikigai/"
+},
+{
+"t": "Unwinding Anxiety",
+"a": "Judson Brewer",
+"m": 19,
+"u": "https://thezehnapp.com/en/books/unwinding-anxiety/"
+},
+{
+"t": "10 % Happier",
+"a": "Dan Harris",
+"m": 18,
+"u": "https://thezehnapp.com/en/books/10-happier/"
+}
+],
+"ru": [
+{
+"t": "Сила настоящего момента",
+"a": "Экхарт Толле",
+"m": 18,
+"u": "https://thezehnapp.com/ru/books/book-1397/"
+},
+{
+"t": "Осознанность для начинающих",
+"a": "Jon Kabat-Zinn",
+"m": 19,
+"u": "https://thezehnapp.com/ru/books/book-2123/"
+},
+{
+"t": "Разматывая тревогу",
+"a": "Judson Brewer",
+"m": 19,
+"u": "https://thezehnapp.com/ru/books/book-2119/"
+},
+{
+"t": "Письма к Луцилию",
+"a": "Lucius Annaeus Seneca",
+"m": 21,
+"u": "https://thezehnapp.com/ru/books/book-1774/"
+}
+],
+"ar": [
+{
+"t": "اليقظة الذهنية للمبتدئين",
+"a": "Jon Kabat-Zinn",
+"m": 20,
+"u": "https://thezehnapp.com/ar/books/book-2157/"
+},
+{
+"t": "فك أسر القلق",
+"a": "Judson Brewer",
+"m": 18,
+"u": "https://thezehnapp.com/ar/books/book-2177/"
+},
+{
+"t": "رسائل سينيكا الرواقية",
+"a": "Lucius Annaeus Seneca",
+"m": 21,
+"u": "https://thezehnapp.com/ar/books/book-1765/"
+},
+{
+"t": "الأشياء التي لا تراها إلا حين تتمهّل",
+"a": "Haemin Sunim",
+"m": 20,
+"u": "https://thezehnapp.com/ar/books/book-2210/"
+}
+]
+},
+"people": {
+"en": [
+{
+"t": "Never Split the Difference",
+"a": "Chris Voss",
+"m": 12,
+"u": "https://thezehnapp.com/en/books/never-split-the-difference/"
+},
+{
+"t": "How to Win Friends and Influence People",
+"a": "Dale Carnegie",
+"m": 20,
+"u": "https://thezehnapp.com/en/books/how-to-win-friends-and-influence-people/"
+},
+{
+"t": "Talking to Strangers",
+"a": "Malcolm Gladwell",
+"m": 16,
+"u": "https://thezehnapp.com/en/books/talking-to-strangers/"
+},
+{
+"t": "Influence",
+"a": "Robert B. Cialdini",
+"m": 25,
+"u": "https://thezehnapp.com/en/books/influence/"
+}
+],
+"ru": [
+{
+"t": "Никогда не идите на компромисс",
+"a": "Крис Восс",
+"m": 15,
+"u": "https://thezehnapp.com/ru/books/book-1122/"
+},
+{
+"t": "Путь к согласию",
+"a": "Роджер Фишер, Уильям Юри, Брюс Паттон",
+"m": 22,
+"u": "https://thezehnapp.com/ru/books/book-1542/"
+},
+{
+"t": "Трудные разговоры",
+"a": "Дуглас Стоун, Брюс Пэттон, Шейла Хин",
+"m": 15,
+"u": "https://thezehnapp.com/ru/books/book-1050/"
+},
+{
+"t": "Ненасильственное общение",
+"a": "Маршалл Б. Розенберг",
+"m": 15,
+"u": "https://thezehnapp.com/ru/books/book-1124/"
+}
+],
+"ar": [
+{
+"t": "لا تتنازل أبداً عن النصف",
+"a": "Chris Voss",
+"m": 22,
+"u": "https://thezehnapp.com/ar/books/book-2226/"
+},
+{
+"t": "الوصول إلى نعم",
+"a": "Roger Fisher, William Ury, Bruce Patton",
+"m": 21,
+"u": "https://thezehnapp.com/ar/books/book-2294/"
+},
+{
+"t": "المحادثات الصعبة",
+"a": "Douglas Stone, Bruce Patton, Sheila Heen",
+"m": 20,
+"u": "https://thezehnapp.com/ar/books/book-1593/"
+}
+]
+},
+"business": {
+"en": [
+{
+"t": "Zero to One",
+"a": "Peter Thiel, Blake Masters",
+"m": 25,
+"u": "https://thezehnapp.com/en/books/zero-to-one/"
+},
+{
+"t": "The E-Myth Revisited",
+"a": "Michael E. Gerber",
+"m": 24,
+"u": "https://thezehnapp.com/en/books/the-e-myth-revisited/"
+},
+{
+"t": "The 4-Hour Workweek",
+"a": "Timothy Ferriss",
+"m": 18,
+"u": "https://thezehnapp.com/en/books/the-4-hour-workweek/"
+},
+{
+"t": "Business Model Generation",
+"a": "Alexander Osterwalder",
+"m": 25,
+"u": "https://thezehnapp.com/en/books/business-model-generation/"
+}
+],
+"ru": [
+{
+"t": "Стратегия голубого океана",
+"a": "В. Чан Ким",
+"m": 20,
+"u": "https://thezehnapp.com/ru/books/book-545/"
+},
+{
+"t": "Построение бизнес-моделей",
+"a": "Александр Остервальдер, Ив Пиньёр",
+"m": 19,
+"u": "https://thezehnapp.com/ru/books/book-462/"
+},
+{
+"t": "Правило 10X",
+"a": "Грант Кардон",
+"m": 17,
+"u": "https://thezehnapp.com/ru/books/10x/"
+}
+],
+"ar": [
+{
+"t": "صفر إلى واحد",
+"a": "بيتر ثيل",
+"m": 13,
+"u": "https://thezehnapp.com/ar/books/book-1241/"
+},
+{
+"t": "الشركة الناشئة الخالية من الهدر",
+"a": "Eric Ries",
+"m": 24,
+"u": "https://thezehnapp.com/ar/books/book-1363/"
+},
+{
+"t": "ابتكار نموذج العمل التجاري",
+"a": "ألكسندر أوستروالدر",
+"m": 13,
+"u": "https://thezehnapp.com/ar/books/book-1144/"
+},
+{
+"t": "اختبار الأم",
+"a": "Rob Fitzpatrick",
+"m": 21,
+"u": "https://thezehnapp.com/ar/books/book-1327/"
+}
+]
+},
+"lead": {
+"en": [
+{
+"t": "Extreme Ownership",
+"a": "Jocko Willink, Leif Babin",
+"m": 16,
+"u": "https://thezehnapp.com/en/books/extreme-ownership/"
+},
+{
+"t": "Dare To Lead",
+"a": "Brene Brown",
+"m": 25,
+"u": "https://thezehnapp.com/en/books/dare-to-lead/"
+},
+{
+"t": "Good to Great",
+"a": "Jim Collins",
+"m": 25,
+"u": "https://thezehnapp.com/en/books/good-to-great/"
+},
+{
+"t": "The 5 AM Club",
+"a": "Robin Sharma",
+"m": 17,
+"u": "https://thezehnapp.com/en/books/the-5-am-club/"
+}
+],
+"ru": [
+{
+"t": "Пять пороков команды",
+"a": "Патрик Ленсиони",
+"m": 23,
+"u": "https://thezehnapp.com/ru/books/book-1003/"
+},
+{
+"t": "Принципы",
+"a": "Рэй Далио",
+"m": 11,
+"u": "https://thezehnapp.com/ru/books/book-1308/"
+},
+{
+"t": "Скорость доверия",
+"a": "Стивен Р. Кови",
+"m": 20,
+"u": "https://thezehnapp.com/ru/books/book-1141/"
+},
+{
+"t": "Команда команд",
+"a": "Стэнли Маккристал и др.",
+"m": 12,
+"u": "https://thezehnapp.com/ru/books/book-1339/"
+}
+],
+"ar": [
+{
+"t": "القادة يأكلون آخراً",
+"a": "Simon Sinek",
+"m": 14,
+"u": "https://thezehnapp.com/ar/books/book-1350/"
+},
+{
+"t": "من الجيد إلى العظيم",
+"a": "Jim Collins",
+"m": 15,
+"u": "https://thezehnapp.com/ar/books/book-1326/"
+},
+{
+"t": "تجرأ أن تقود",
+"a": "Brene Brown",
+"m": 13,
+"u": "https://thezehnapp.com/ar/books/book-1293/"
+}
+]
+},
+"mind": {
+"en": [
+{
+"t": "The Courage to Be Disliked",
+"a": "Ichiro Kishimi, Fumitake Koga",
+"m": 15,
+"u": "https://thezehnapp.com/en/books/the-courage-to-be-disliked/"
+},
+{
+"t": "Emotional Intelligence",
+"a": "Daniel Goleman",
+"m": 17,
+"u": "https://thezehnapp.com/en/books/emotional-intelligence/"
+},
+{
+"t": "Feeling Good",
+"a": "David D. Burns",
+"m": 15,
+"u": "https://thezehnapp.com/en/books/feeling-good/"
+}
+],
+"ru": [
+{
+"t": "Эмоциональный интеллект",
+"a": "Дэниел Гоулман",
+"m": 23,
+"u": "https://thezehnapp.com/ru/books/book-1220/"
+},
+{
+"t": "Поток",
+"a": "Михай Чиксентмихайи",
+"m": 20,
+"u": "https://thezehnapp.com/ru/books/book-1234/"
+},
+{
+"t": "Игры, в которые играют люди",
+"a": "Эрик Берн",
+"m": 13,
+"u": "https://thezehnapp.com/ru/books/book-1067/"
+},
+{
+"t": "Шум",
+"a": "Дэниел Канеман, Оливье Сибони, Касс Санстейн",
+"m": 21,
+"u": "https://thezehnapp.com/ru/books/book-1123/"
+}
+],
+"ar": [
+{
+"t": "هدية العلاج النفسي",
+"a": "Irvin D. Yalom",
+"m": 25,
+"u": "https://thezehnapp.com/ar/books/book-1683/"
+},
+{
+"t": "خطأ ديكارت",
+"a": "Antonio Damasio",
+"m": 22,
+"u": "https://thezehnapp.com/ar/books/book-2015/"
+},
+{
+"t": "الانفعالات المكشوفة",
+"a": "Paul Ekman",
+"m": 24,
+"u": "https://thezehnapp.com/ar/books/book-1595/"
+}
+]
+},
+"science": {
+"en": [
+{
+"t": "The Black Swan",
+"a": "Nassim Nicholas Taleb",
+"m": 26,
+"u": "https://thezehnapp.com/en/books/the-black-swan/"
+},
+{
+"t": "Thinking In Systems",
+"a": "Donella Meadows, Diana Wright",
+"m": 20,
+"u": "https://thezehnapp.com/en/books/thinking-in-systems/"
+},
+{
+"t": "The Brain that Changes Itself",
+"a": "Norman Doidge",
+"m": 18,
+"u": "https://thezehnapp.com/en/books/the-brain-that-changes-itself/"
+},
+{
+"t": "Superforecasting",
+"a": "Philip E. Tetlock, Dan Gardner",
+"m": 14,
+"u": "https://thezehnapp.com/en/books/superforecasting/"
+}
+],
+"ru": [
+{
+"t": "Чёрный лебедь",
+"a": "Нассим Николас Талеб",
+"m": 15,
+"u": "https://thezehnapp.com/ru/books/book-753/"
+},
+{
+"t": "Как мы учимся",
+"a": "Бенедикт Кэри",
+"m": 11,
+"u": "https://thezehnapp.com/ru/books/book-1273/"
+},
+{
+"t": "Мышление в системах",
+"a": "Донелла Медоуз, Диана Райт",
+"m": 17,
+"u": "https://thezehnapp.com/ru/books/book-1428/"
+},
+{
+"t": "Физика будущего",
+"a": "Мичио Каку",
+"m": 15,
+"u": "https://thezehnapp.com/ru/books/book-1731/"
+}
+],
+"ar": [
+{
+"t": "البجعة السوداء",
+"a": "Nassim Nicholas Taleb",
+"m": 18,
+"u": "https://thezehnapp.com/ar/books/book-1415/"
+},
+{
+"t": "الدماغ الذي يغير نفسه",
+"a": "Norman Doidge",
+"m": 23,
+"u": "https://thezehnapp.com/ar/books/book-2204/"
+},
+{
+"t": "التفكير في الأنظمة",
+"a": "Donella Meadows, Diana Wright",
+"m": 21,
+"u": "https://thezehnapp.com/ar/books/book-2479/"
+},
+{
+"t": "فيزياء المستقبل",
+"a": "Michio Kaku",
+"m": 19,
+"u": "https://thezehnapp.com/ar/books/book-2497/"
+}
+]
+}
+}

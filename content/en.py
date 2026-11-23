@@ -96,13 +96,14 @@ PROMPTS_PAGE = dict(
     title="AI Coaching Prompts: 108 Free Prompts | Intellect AI",
     desc="108 free, copy-ready AI coaching prompts for business, money, focus, calm, negotiation, languages, leadership and science. Paste into any AI chat.",
     h1="Free AI coaching prompts",
-    lead="Twelve prompts for each of the nine coaches. Below are three starters per coach; open a coach to see all twelve with examples and tips.",
+    lead="All 108 prompts, twelve for each of the nine coaches. Filter by coach, copy a prompt and paste it into any AI chat. Each coach page adds examples, tips and answers to common questions.",
+    filter_all="All coaches", filter_label="Filter prompts by coach",
     tldr=[
         "108 prompts in total, 12 per coach, all free to copy.",
         "Replace the [brackets] with your own details before you send a prompt.",
         "They work in the Zehn AI Chat and in any other AI assistant.",
     ],
-    see_all="See all 12 prompts",
+    see_all="Examples and tips for this coach",
 )
 
 PRIVACY = dict(
