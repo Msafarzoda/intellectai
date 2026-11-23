@@ -231,3 +231,11 @@ html[lang=ar] .kicker{letter-spacing:0}
 .scr.club .post{padding:10px 12px 0}.scr.club .post small{display:block;font-size:10px;color:#b7c8d2}.scr.club .post b{display:block;font-size:12.5px;margin-top:2px}
 .scr.club .post p{font-size:10.5px;margin:3px 0 6px;color:#dfe9ee}.scr.club .post .cm{display:inline-block;background:#7df37a;color:#0b1d2a;border-radius:6px;padding:3px 9px;font-size:10px;font-weight:600}
 .uifig .cap{color:var(--ink3)}
+/* mobile fixes: wrapping and 40px+ tap targets */
+.plist li>*{min-width:0}.pt,.turn p,.tbl td{overflow-wrap:anywhere}
+.cp{min-height:40px;padding:9px 12px}
+.fchip{min-height:40px;padding:8px 14px}
+.langs a{min-width:40px;min-height:36px;display:inline-flex;align-items:center;justify-content:center}
+.nav a{min-height:40px;display:inline-flex;align-items:center}
+.related a{min-height:40px}
+footer ul a{display:inline-block;padding:4px 0}
