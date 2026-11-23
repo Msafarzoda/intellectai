@@ -184,6 +184,7 @@ def head(lang, title, desc, path, ld, alts=True, og_lang=None, noindex=False):
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
 <link rel="manifest" href="/site.webmanifest">
+{f'<link rel="alternate" type="application/rss+xml" title="Intellect AI" href="/{lang}/feed.xml">' if lang else ""}
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -223,7 +224,7 @@ def footer(lang):
 <div><a class="brand" href="/{lang}/" aria-label="Intellect AI">{LOGO}Intellect AI</a><p style="margin-top:10px">{e(ui['footer_about'])}</p>
 <p><a href="mailto:{C.EMAIL}">{C.EMAIL}</a></p><b style="margin-top:14px">{e(gu['social_h'])}</b><ul class="soc">{soc}</ul></div>
 <div><b>{e(ui['nav_coaches'])}</b><ul>{links}</ul></div>
-<div><b>{e(gu['nav_guides'])}</b><ul>{cats}<li><a href="/{lang}/read-next/">{e(gu['quiz_nav'])}</a></li></ul></div>
+<div><b>{e(gu['nav_guides'])}</b><ul>{cats}<li><a href="/{lang}/read-next/">{e(gu['quiz_nav'])}</a></li><li><a href="/{lang}/tools/">{e(TL.IDX[lang]['nav'])}</a></li><li><a href="/{lang}/printables/">{e(PR.P[lang]['h1'])}</a></li><li><a href="/{lang}/feed.xml">RSS</a></li></ul></div>
 <div><b>{e(ui['footer_links'])}</b><ul><li><a href="/{lang}/">{e(ui['home'])}</a></li><li><a href="/{lang}/prompts/">{e(ui['prompts_all'])}</a></li><li><a href="/{lang}/about/">{e(gu['about'])}</a></li><li><a href="/{lang}/privacy/">{e(ui['privacy'])}</a></li><li><a href="/{lang}/zehn/">Zehn</a></li></ul></div>
 <div class="copy">{e(ui['footer_brand'])} · © 2026</div>
 </div></footer>
@@ -529,7 +530,7 @@ def build_guide(lang, k, g):
     ld = [org_ld(), site_ld(),
           {"@type": "Article", "@id": url(lang, path) + "#article", "headline": g["h1"], "description": g["desc"], "inLanguage": lang,
            "url": url(lang, path), "mainEntityOfPage": url(lang, path), "image": f"{C.BASE}/og/og-{lang}.jpg", "wordCount": n,
-           "datePublished": PUBLISHED, "dateModified": MODIFIED, "author": {"@id": ORG_ID}, "publisher": {"@id": ORG_ID},
+           "datePublished": g.get("date", PUBLISHED), "dateModified": g.get("date", MODIFIED), "author": {"@id": ORG_ID}, "publisher": {"@id": ORG_ID},
            "isPartOf": {"@id": SITE_ID}, "articleSection": cat, **({"about": zehn_ld(lang)} if g["cat"] == "zehn-guides" else {})},
           faq_ld(g["faq"]),
           crumbs_ld([(ui["home"], url(lang)), (gu["nav_guides"], url(lang, "guides/")), (g["h1"], url(lang, path))])]
@@ -541,7 +542,7 @@ def build_guide(lang, k, g):
     body = f"""<div class="wrap narrow page">
 <nav class="crumbs" aria-label="breadcrumb"><ol><li><a href="/{lang}/">{e(ui['home'])}</a></li><li><a href="/{lang}/guides/#{g['cat']}">{e(cat)}</a></li><li aria-current="page">{e(g['h1'])}</li></ol></nav>
 <h1 style="margin-top:18px">{e(g['h1'])}</h1>
-<p class="muted">{e(gu['read_min'].format(n=max(3, round(n / 220))))} · {e(gu['updated'])}: {e(G[lang].DATE)}</p>
+<p class="muted">{e(gu['read_min'].format(n=max(3, round(n / 220))))} · {e(gu['updated'])}: {e(g.get('date_h', G[lang].DATE))}</p>
 <p class="lead">{md(g['lead'])}</p>
 {('<div class="answer"><b>' + e(gu.get('answer_h', 'Short answer')) + '</b><p>' + md(g['answer']) + '</p></div>') if g.get('answer') else ''}
 {tldr(ui, g['tldr'])}
@@ -625,13 +626,187 @@ document.getElementById("qa").addEventListener("click",function(){r.hidden=true;
     write(f"{lang}/{path}index.html", head(lang, q["title"], q["desc"], path, ld) + header(lang, path) + body + footer(lang))
 
 
+import tools as TL  # noqa: E402
+
+WPM = {"en": 250, "ru": 200, "ar": 180}
+
+
+def tool_widget(lang, slug, t):
+    ui = L[lang].UI
+    if slug == "reading-time-calculator":
+        f, r = t["f"], t["r"]
+        inp = lambda k, v, mn, mx: f'<label class="fld"><span>{e(f[k])}</span><input type="number" inputmode="numeric" id="{k}" value="{v}" min="{mn}" max="{mx}"></label>'
+        js = ("var R=" + json.dumps(r, ensure_ascii=False) + ";"
+              """function c(){var g=function(i){return Math.max(1,+document.getElementById(i).value||0)};var m=g('pages')*g('wpp')/g('wpm');var h=Math.floor(m/60),mi=Math.round(m%60);
+document.getElementById('o1').textContent=R.hm.replace('{h}',h).replace('{m}',mi);document.getElementById('o2').textContent=R.d.replace('{d}',Math.ceil(m/g('mpd')));document.getElementById('o3').textContent=R.s;}
+document.getElementById('calc').addEventListener('input',c);document.getElementById('calc').addEventListener('submit',function(v){v.preventDefault();c()});c();""")
+        return (f'<form id="calc" class="tool"><div class="fgrid">{inp("pages", 300, 1, 5000)}{inp("wpp", 250, 50, 1000)}{inp("wpm", WPM[lang], 50, 1000)}{inp("mpd", 20, 1, 600)}</div>'
+                f'<button class="btn p" type="submit">{e(f["go"])}</button></form>'
+                f'<div class="outs" aria-live="polite"><div><span>{e(r["hours"])}</span><b id="o1"></b></div><div><span>{e(r["days"])}</span><b id="o2"></b></div><div><span>{e(r["sum"])}</span><b id="o3"></b></div></div>'
+                f'<script>{js}</script>')
+    if slug == "book-club-name-generator":
+        f = t["f"]
+        sel = lambda i, items: f'<select id="{i}">' + "".join(f'<option value="{k}">{e(v)}</option>' for k, v in items) + "</select>"
+        pats = {"en": ["{a} {n}", "The {a} {n}", "{a} {t}", "{t} {n}"], "ru": ["{N} «{a}»", "«{a}»", "«{t}»", "{N} «{t}»"], "ar": ["{n} «{a}»", "«{a}»", "«{t}»", "{n} «{t}»"]}[lang]
+        js = ("var W=" + json.dumps(TL.NAMES[lang], ensure_ascii=False) + ",P=" + json.dumps(pats, ensure_ascii=False) + ",CP=" + json.dumps(f["copy"], ensure_ascii=False) + ",OK=" + json.dumps(ui["copied"], ensure_ascii=False) + ";"
+              """function pk(a){return a[Math.floor(Math.random()*a.length)]}
+function gen(){var th=document.getElementById('th').value,st=document.getElementById('st').value,o=document.getElementById('names'),seen={},out=[];var A=W.a[st],T=W.t[th].concat(th==='any'?[]:W.t.any);
+for(var i=0;i<60&&out.length<6;i++){var n=pk(W.n);var s=pk(P).replace('{a}',pk(A)).replace('{t}',pk(T)).replace('{n}',n).replace('{N}',n.charAt(0).toUpperCase()+n.slice(1));if(!seen[s]){seen[s]=1;out.push(s)}}
+o.innerHTML='';out.forEach(function(s){var li=document.createElement('li');var p=document.createElement('p');p.className='pt';p.textContent=s;var b=document.createElement('button');b.type='button';b.className='cp';b.dataset.l=CP;b.dataset.ok=OK;b.textContent=CP;li.appendChild(p);li.appendChild(b);o.appendChild(li)})}
+document.getElementById('gen').addEventListener('submit',function(v){v.preventDefault();gen()});gen();""")
+        return (f'<form id="gen" class="tool"><div class="fgrid"><label class="fld"><span>{e(f["theme"])}</span>{sel("th", t["themes"])}</label>'
+                f'<label class="fld"><span>{e(f["style"])}</span>{sel("st", t["styles"])}</label></div><button class="btn p" type="submit">{e(f["go"])}</button></form>'
+                f'<ol id="names" class="plist one" aria-live="polite"></ol><script>{js}</script>')
+    if slug == "reading-challenge-tracker":
+        f = t["f"]
+        js = ("var F=" + json.dumps(f, ensure_ascii=False) + ";"
+              """var gs=document.getElementById('goal'),ys=document.getElementById('yr'),grid=document.getElementById('grid'),st={};
+function key(){return 'iai-tracker-'+ys.value}
+function load(){try{st=JSON.parse(localStorage.getItem(key())||'{}')}catch(x){st={}}if(st.goal)gs.value=st.goal;draw()}
+function save(){try{localStorage.setItem(key(),JSON.stringify(st))}catch(x){}}
+function draw(){var g=Math.max(1,Math.min(365,+gs.value||12));st.goal=g;st.t=(st.t||[]).filter(function(i){return i<g});grid.innerHTML='';
+for(var i=0;i<g;i++){var b=document.createElement('button');b.type='button';b.className='tick';b.textContent=i+1;b.dataset.i=i;b.setAttribute('aria-pressed',st.t.indexOf(i)>=0);grid.appendChild(b)}stat()}
+function stat(){var g=st.goal,n=st.t.length,y=+ys.value,now=new Date(),s=new Date(y,0,1),e=new Date(y+1,0,1),fr=now<s?0:now>=e?1:(now-s)/(e-s);var ex=Math.floor(g*fr),d=n-ex;
+document.getElementById('done').textContent=F.done.replace('{n}',n).replace('{g}',g);document.getElementById('bar').style.width=Math.min(100,n/g*100)+'%';
+document.getElementById('pace').textContent=d>0?F.pace_ok.replace('{d}',d):d===0?F.pace_even:F.pace_bad.replace('{d}',-d)}
+grid.addEventListener('click',function(v){var b=v.target.closest('.tick');if(!b)return;var i=+b.dataset.i,k=st.t.indexOf(i);if(k>=0)st.t.splice(k,1);else st.t.push(i);b.setAttribute('aria-pressed',k<0);save();stat()});
+gs.addEventListener('change',function(){draw();save()});ys.addEventListener('change',load);
+document.getElementById('rs').addEventListener('click',function(){st={goal:+gs.value,t:[]};save();draw()});document.getElementById('pr').addEventListener('click',function(){window.print()});
+var cy=new Date().getFullYear(),nx=new Date().getMonth()>=10;[cy,cy+1].forEach(function(y){var o=document.createElement('option');o.value=y;o.textContent=y;if(nx&&y===cy+1)o.selected=true;ys.appendChild(o)});load();""")
+        return (f'<div class="tool"><div class="fgrid"><label class="fld"><span>{e(f["goal"])}</span><select id="goal"><option>12</option><option>24</option><option selected>52</option><option>100</option></select></label>'
+                f'<label class="fld"><span>{e(f["year"])}</span><select id="yr"></select></label></div>'
+                f'<p class="prog"><b id="done"></b><span class="barw"><span id="bar"></span></span><span id="pace" class="muted"></span></p>'
+                f'<div id="grid" class="grid52"></div><div class="btns noprint"><button id="pr" class="btn p" type="button">{e(f["print"])}</button><button id="rs" class="btn ghost" type="button">{e(f["reset"])}</button></div>'
+                f'<p class="muted">{e(f["note"])}</p></div><script>{js}</script>')
+    return ""
+
+
+def build_tools(lang):
+    ui, gu, ix = L[lang].UI, G[lang].UI, TL.IDX[lang]
+    q = G[lang].QUIZ
+    for slug, t in TL.TOOLS[lang].items():
+        path = f"tools/{slug}/"
+        check_faq(f"tool {slug}", lang, t["faq"])
+        ld = [org_ld(), site_ld(),
+              {"@type": "WebApplication", "name": t["h1"], "url": url(lang, path), "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any",
+               "isAccessibleForFree": True, "inLanguage": lang, "publisher": {"@id": ORG_ID}, "description": t["desc"]},
+              faq_ld(t["faq"]), crumbs_ld([(ui["home"], url(lang)), (ix["nav"], url(lang, "tools/")), (t["h1"], url(lang, path))])]
+        h, ps = t["how"]
+        faq = "".join(f"<h3>{e(a)}</h3><p>{md(b)}</p>" for a, b in t["faq"])
+        others = "".join(f'<a href="/{lang}/tools/{s}/">{e(o["h1"])}</a>' for s, o in TL.TOOLS[lang].items() if s != slug) + f'<a href="/{lang}/read-next/">{e(q["h1"])}</a>'
+        body = f"""<div class="wrap narrow page">
+<nav class="crumbs noprint" aria-label="breadcrumb"><ol><li><a href="/{lang}/">{e(ui['home'])}</a></li><li><a href="/{lang}/tools/">{e(ix['nav'])}</a></li><li aria-current="page">{e(t['h1'])}</li></ol></nav>
+<h1 style="margin-top:18px">{e(t['h1'])}</h1><p class="lead">{e(t['lead'])}</p>
+{tool_widget(lang, slug, t)}
+<div class="noprint">{tldr(ui, t['tldr'])}
+<section><h2>{e(h)}</h2>{''.join(f'<p>{md(x)}</p>' for x in ps)}</section>
+<section class="faq"><h2>{e(ui['faq_h'])}</h2>{faq}</section>
+<section><h2>{e(gu['related_h'])}</h2><div class="related">{others}</div></section></div>
+</div>"""
+        write(f"{lang}/{path}index.html", head(lang, t["title"], t["desc"], path, ld) + header(lang, path) + body + footer(lang))
+    path = "tools/"
+    cards = "".join(f'<a class="card" href="/{lang}/tools/{s}/"><h3>{e(o["h1"])}</h3><p>{e(o["desc"])}</p><span class="more">{e(ix["open"])} →</span></a>' for s, o in TL.TOOLS[lang].items())
+    cards += f'<a class="card quizcard" href="/{lang}/read-next/"><span class="kicker">Quiz</span><h3>{e(q["h1"])}</h3><p>{e(q["lead"])}</p><span class="more">{e(q["show"])} →</span></a>'
+    ld = [org_ld(), site_ld(), {"@type": "CollectionPage", "url": url(lang, path), "name": ix["h1"], "inLanguage": lang, "isPartOf": {"@id": SITE_ID}},
+          crumbs_ld([(ui["home"], url(lang)), (ix["nav"], url(lang, path))])]
+    body = f"""<div class="wrap page" style="max-width:980px"><nav class="crumbs" aria-label="breadcrumb"><ol><li><a href="/{lang}/">{e(ui['home'])}</a></li><li aria-current="page">{e(ix['nav'])}</li></ol></nav>
+<h1 style="margin-top:18px">{e(ix['h1'])}</h1><p class="lead">{e(ix['lead'])}</p>{tldr(ui, ix['tldr'])}<div class="grid g2">{cards}</div></div>"""
+    write(f"{lang}/{path}index.html", head(lang, ix["title"], ix["desc"], path, ld) + header(lang, path) + body + footer(lang))
+
+
+import printables as PR  # noqa: E402
+KITS = ["tracker", "club", "sheet"]
+KIT_PAGES = {"tracker": 1, "club": 2, "sheet": 1}
+
+
+def kit_html(lang, kit):
+    p = PR.P[lang]
+    k = p["kits"][kit]
+    d = "rtl" if lang == "ar" else "ltr"
+    font = "Cairo" if lang == "ar" else "Inter"
+    css = (f"@page{{size:A4;margin:14mm}}body{{font-family:'{font}',sans-serif;color:#0B1D2A;font-size:11pt;margin:0}}"
+           "h1{font-size:20pt;margin:0 0 4mm}h2{font-size:12.5pt;margin:6mm 0 2mm}table{width:100%;border-collapse:collapse}td,th{border:1px solid #9AA6AE;padding:2.2mm;text-align:start;vertical-align:top}"
+           "th{background:#E9F7EF;font-size:9.5pt}.ln td{height:8.4mm}.strip{display:grid;grid-template-columns:repeat(31,1fr);gap:1mm;margin-top:2mm}.strip span{border:1px solid #9AA6AE;height:7mm;font-size:7pt;text-align:center}"
+           ".foot{position:fixed;bottom:0;left:0;right:0;font-size:8pt;color:#6B7F90;text-align:center}.two{display:grid;grid-template-columns:1fr 1fr;gap:3mm}.fl{border-bottom:1px solid #9AA6AE;height:9mm;margin-bottom:2mm;font-size:9pt;color:#6B7F90}"
+           ".brk{page-break-before:always}.lines{columns:2;column-gap:8mm}.lines div{border-bottom:1px solid #9AA6AE;height:7.7mm;font-size:9pt;display:flex;align-items:flex-end;break-inside:avoid}"
+           ".mo{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5mm;font-size:8.5pt;margin:2mm 0 4mm}.mo span{background:#E9F7EF;border-radius:2mm;padding:1.4mm 2mm}.sub{color:#41566A;margin:0 0 3mm}")
+    if kit == "tracker":
+        rows = "".join("<tr class='ln'>" + "<td></td>" * 6 + "</tr>" for _ in range(15))
+        body = (f"<h1>{e(k['h'])}</h1><p>{e(k['month'])}: ____________________</p><table><tr>" + "".join(f"<th>{e(c)}</th>" for c in k["cols"]) + f"</tr>{rows}</table>"
+                f"<h2>{e(k['strip'])}</h2><div class='strip'>" + "".join(f"<span>{i}</span>" for i in range(1, 32)) + "</div>")
+    elif kit == "club":
+        fields = "".join(f"<div class='fl'>{e(f)}</div>" for f in k["fields"])
+        rules = "".join(f"<li>{e(r)}</li>" for r in k["rules"])
+        roles = "".join(f"<tr><td><b>{e(a)}</b></td><td>{e(b)}</td><td style='width:32%'></td></tr>" for a, b in k["roles"])
+        agenda = "".join(f"<li>{e(a)}</li>" for a in k["agenda"])
+        qs = "".join(f"<li>{e(q)}</li>" for q in k["qs"])
+        body = (f"<h1>{e(k['h'])}</h1><h2>{e(k['card'])}</h2>{fields}<h2>{e(k['rules_h'])}</h2><ol>{rules}</ol><h2>{e(k['roles_h'])}</h2><table>{roles}</table>"
+                f"<div class='brk'></div><h2>{e(k['agenda_h'])}</h2><ol>{agenda}</ol><h2>{e(k['q_h'])}</h2><ol>{qs}</ol>")
+    else:
+        lines = "".join(f"<div>{i}.</div>" for i in range(1, 53))
+        body = (f"<h1>{e(k['h'])}</h1><p class='sub'>{e(k['sub'])}</p><div class='mo'>" + "".join(f"<span>{e(m)}</span>" for m in k["months"]) + f"</div><div class='lines'>{lines}</div>")
+    return (f"<!doctype html><html lang='{lang}' dir='{d}'><head><meta charset='utf-8'><link rel='stylesheet' href='https://fonts.googleapis.com/css2?{FONTS[lang]}&display=block'>"
+            f"<style>{css}</style></head><body>{body}<div class='foot'>{e(p['foot'])}</div></body></html>")
+
+
+def render_pdfs():
+    tmp = os.path.join(ROOT, ".pdf_tmp")
+    os.makedirs(tmp, exist_ok=True)
+    out = os.path.join(ROOT, "static", "printables")
+    os.makedirs(out, exist_ok=True)
+    for lang in C.LANGS:
+        for kit in KITS:
+            hp = os.path.join(tmp, f"{lang}-{kit}.html")
+            open(hp, "w", encoding="utf-8").write(kit_html(lang, kit))
+            subprocess.run([CHROME, "--headless=new", "--disable-gpu", "--no-pdf-header-footer", "--virtual-time-budget=5000",
+                            f"--print-to-pdf={os.path.join(out, f'{lang}-{kit}.pdf')}", "file://" + hp],
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL, timeout=120)
+    shutil.rmtree(tmp)
+
+
+def build_printables(lang):
+    ui, p = L[lang].UI, PR.P[lang]
+    path = "printables/"
+    check_faq("printables", lang, p["faq"])
+    items = ""
+    for kit in KITS:
+        k = p["kits"][kit]
+        n = KIT_PAGES[kit]
+        items += (f'<div class="card"><h3>{e(k["name"])}</h3><p>{e(k["what"])}</p><p class="muted">PDF · {e(p["page1"] if n == 1 else p["pages"].format(n=n))}</p>'
+                  f'<a class="btn p" href="/printables/{lang}-{kit}.pdf" download>{e(p["dl"])}</a></div>')
+    ld = [org_ld(), site_ld(),
+          {"@type": "CollectionPage", "url": url(lang, path), "name": p["h1"], "description": p["desc"], "inLanguage": lang, "isPartOf": {"@id": SITE_ID},
+           "hasPart": [{"@type": "DigitalDocument", "name": p["kits"][k]["name"], "url": f"{C.BASE}/printables/{lang}-{k}.pdf", "encodingFormat": "application/pdf", "isAccessibleForFree": True} for k in KITS]},
+          faq_ld(p["faq"]), crumbs_ld([(ui["home"], url(lang)), (p["h1"], url(lang, path))])]
+    faq = "".join(f"<h3>{e(a)}</h3><p>{md(b)}</p>" for a, b in p["faq"])
+    body = f"""<div class="wrap page" style="max-width:980px"><nav class="crumbs" aria-label="breadcrumb"><ol><li><a href="/{lang}/">{e(ui['home'])}</a></li><li aria-current="page">{e(p['h1'])}</li></ol></nav>
+<h1 style="margin-top:18px">{e(p['h1'])}</h1><p class="lead">{e(p['lead'])}</p>{tldr(ui, p['tldr'])}<div class="grid">{items}</div>
+<section><h2>{e(p['use_h'])}</h2><ul class="gl">{''.join(f'<li>{e(x)}</li>' for x in p['use'])}</ul></section>
+<section class="faq"><h2>{e(ui['faq_h'])}</h2>{faq}</section></div>"""
+    write(f"{lang}/{path}index.html", head(lang, p["title"], p["desc"], path, ld) + header(lang, path) + body + footer(lang))
+
+
+def build_rss():
+    import email.utils as eu, datetime as dt
+    for lang in C.LANGS:
+        items = []
+        for k, g in all_guides(lang):
+            d = g.get("date", PUBLISHED)
+            items.append((d, g["h1"], url(lang, gpath(k, g)), g["desc"]))
+        items.sort(key=lambda x: x[0], reverse=True)
+        xi = "".join(f"<item><title>{e(t)}</title><link>{u}</link><guid isPermaLink=\"true\">{u}</guid><pubDate>{eu.format_datetime(dt.datetime.fromisoformat(d + 'T08:00:00+00:00'))}</pubDate><description>{e(ds)}</description></item>" for d, t, u, ds in items)
+        h = L[lang].HOME
+        write(f"{lang}/feed.xml", f'<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Intellect AI ({lang.upper()})</title><link>{url(lang)}</link>'
+              f'<atom:link href="{url(lang, "feed.xml")}" rel="self" type="application/rss+xml"/><description>{e(h["desc"])}</description><language>{lang}</language>{xi}</channel></rss>\n')
+
+
 def build_seo():
     gps = []
     for lang in C.LANGS:
         for k, g in all_guides(lang):
             if gpath(k, g) not in gps:
                 gps.append(gpath(k, g))
-    pages = [""] + [s + "/" for s, *_ in C.COACHES] + ["prompts/", "privacy/", "about/", "guides/", "read-next/"] + gps
+    pages = [""] + [s + "/" for s, *_ in C.COACHES] + ["prompts/", "privacy/", "about/", "guides/", "read-next/", "tools/", "printables/"] + [f"tools/{x}/" for x in TL.TOOLS["en"]] + gps
     out = ['<?xml version="1.0" encoding="UTF-8"?>',
            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
            f"<url><loc>{C.BASE}/</loc><lastmod>{MODIFIED}</lastmod></url>"]
@@ -745,6 +920,8 @@ def main():
     import hashlib
     STYLE_V = hashlib.md5(open(os.path.join(ROOT, "static", "style.css"), "rb").read()).hexdigest()[:8]
     icons()
+    if "--pdf" in sys.argv or not os.path.exists(os.path.join(ROOT, "static", "printables", "en-sheet.pdf")):
+        render_pdfs()
     if "--og" in sys.argv or not os.path.exists(os.path.join(ROOT, "static", "og", "og-en.jpg")):
         render_og()
     if os.path.exists(DIST):
@@ -762,9 +939,12 @@ def main():
         for k, g in all_guides(lang):
             build_guide(lang, k, g)
         build_quiz(lang)
+        build_tools(lang)
+        build_printables(lang)
     build_root()
     build_404()
     build_seo()
+    build_rss()
     n = sum(len(fs) for _, _, fs in os.walk(DIST))
     print(f"built {n} files in dist/")
     for w in WARN:
