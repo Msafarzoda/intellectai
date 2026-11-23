@@ -239,3 +239,7 @@ html[lang=ar] .kicker{letter-spacing:0}
 .nav a{min-height:40px;display:inline-flex;align-items:center}
 .related a{min-height:40px}
 footer ul a{display:inline-block;padding:4px 0}
+.answer{background:#fff;border:2px solid var(--ink);border-radius:var(--r);padding:16px 18px;margin:20px 0 6px}
+.answer b{display:block;font:800 .82rem var(--fh);letter-spacing:.06em;text-transform:uppercase;color:var(--ink);margin-bottom:4px}
+html[lang=ar] .answer b{letter-spacing:0}.answer p{margin:0;font-size:1.06rem}
+.src{font-size:.88rem;color:var(--ink2);border-top:1px dashed var(--line);margin-top:14px;padding-top:10px}.src b{font-family:var(--fh)}.src ul{margin:6px 0 0;padding-inline-start:18px}

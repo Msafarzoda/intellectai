@@ -28,6 +28,14 @@ def load(lang):
 
 L = {lang: load(lang) for lang in C.LANGS}
 G = {lang: load(f"guides_{lang}") for lang in C.LANGS}
+for _lang in C.LANGS:  # merge later batches: content/guides_<lang>_*.py (GUIDES, CATS, ZEHN)
+    import glob as _glob
+    for _f in sorted(_glob.glob(os.path.join(ROOT, "content", f"guides_{_lang}_*.py"))):
+        _m = load(os.path.basename(_f)[:-3])
+        G[_lang].GUIDES.update(getattr(_m, "GUIDES", {}))
+        G[_lang].CATS.update(getattr(_m, "CATS", {}))
+        G[_lang].ZEHN.update(getattr(_m, "ZEHN", {}))
+        G[_lang].UI.update(getattr(_m, "UI", {}))
 BOOKS = json.load(open(os.path.join(ROOT, "content", "books.json"), encoding="utf-8"))
 e = lambda s: html.escape(s, quote=True)  # noqa: E731
 SOCIAL = [("X", "https://x.com/thezehnapp"), ("Instagram", "https://www.instagram.com/thezehnapp/"), ("YouTube", "https://www.youtube.com/@thezehnapp")]
@@ -51,6 +59,20 @@ def gpath(slug, g):
 def all_guides(lang):
     gm = G[lang]
     return list(gm.GUIDES.items()) + list(gm.ZEHN.items())
+
+
+def avail(path):
+    """Languages a path exists in (guides can be single-language)."""
+    gp = {lang: {gpath(k, g) for k, g in all_guides(lang)} for lang in C.LANGS}
+    allg = set().union(*gp.values())
+    if path in allg:
+        return [x for x in C.LANGS if path in gp[x]]
+    return list(C.LANGS)
+
+
+def xdefault(path):
+    a = avail(path)
+    return f"{C.BASE}/" if len(a) == len(C.LANGS) else url("en" if "en" in a else a[0], path)
 
 
 def url(lang, path=""):
@@ -133,8 +155,8 @@ def head(lang, title, desc, path, ld, alts=True, og_lang=None, noindex=False):
     d = "rtl" if lang == "ar" else "ltr"
     alt = ""
     if alts:
-        alt = "".join(f'<link rel="alternate" hreflang="{x}" href="{url(x, path)}">' for x in C.LANGS)
-        alt += f'<link rel="alternate" hreflang="x-default" href="{C.BASE}/">'
+        alt = "".join(f'<link rel="alternate" hreflang="{x}" href="{url(x, path)}">' for x in avail(path))
+        alt += f'<link rel="alternate" hreflang="x-default" href="{xdefault(path)}">'
     og = f"{C.BASE}/og/og-{og_lang or lang or 'en'}.jpg"
     fl = FONTS[lang or "en"]
     return f"""<!doctype html>
@@ -175,7 +197,8 @@ def head(lang, title, desc, path, ld, alts=True, og_lang=None, noindex=False):
 
 def header(lang, path):
     ui = L[lang].UI
-    langs = "".join(f'<a href="/{x}/{path}" hreflang="{x}" lang="{x}"{" aria-current=\"true\"" if x == lang else ""}>{x.upper()}</a>' for x in C.LANGS)
+    av = avail(path)
+    langs = "".join(f'<a href="/{x}/{path if x in av else ""}" hreflang="{x}" lang="{x}"{" aria-current=\"true\"" if x == lang else ""}>{x.upper()}</a>' for x in C.LANGS)
     return f"""<header class="top"><div class="wrap">
 <a class="brand" href="/{lang}/" aria-label="Intellect AI">{LOGO}<span>Intellect AI</span></a>
 <nav class="nav" aria-label="{e(ui['menu_label'])}">
@@ -451,14 +474,28 @@ def blocks(lang, items):
         elif k == "prompt":
             ui = L[lang].UI
             out.append(f'<ol class="plist one"><li><p class="pt">{e(b[1])}</p><button class="cp" type="button" data-l="{e(ui["copy"])}" data-ok="{e(ui["copied"])}">{e(ui["copy"])}</button></li></ol>')
+        elif k == "sources":
+            out.append('<div class="src"><b>' + e(G[lang].UI.get("sources_h", "Sources")) + '</b><ul>' + "".join(
+                f'<li><a href="{u}" rel="noopener nofollow">{e(n)}</a>, {e(d)}</li>' for n, u, d in b[1]) + "</ul></div>")
         elif k == "ui":
             out.append(club_ui(lang) if b[1] == "club" else '<figure class="uifig">' + phone(lang, L[lang].HOME) + "</figure>")
     return "".join(out)
 
 
 def gwords(g):
-    txt = " ".join([g["lead"]] + g["tldr"] + [x for _, bl in g["sections"] for b in bl for x in ([b] if isinstance(b, str) else (b[1] if isinstance(b[1], list) else [b[1]]) + [c for r in (b[2] if b[0] == "table" else []) for c in r])] + [q + " " + a for q, a in g["faq"]])
-    return words(txt)
+    parts = [g["lead"]] + g["tldr"] + [g.get("answer", "")]
+    for _, bl in g["sections"]:
+        for b in bl:
+            if isinstance(b, str):
+                parts.append(b)
+            elif b[0] in ("ul", "ol"):
+                parts += b[1]
+            elif b[0] == "table":
+                parts += b[1] + [c for r in b[2] for c in r]
+            elif b[0] in ("tip", "prompt"):
+                parts.append(b[1])
+    parts += [q + " " + a for q, a in g["faq"]]
+    return words(" ".join(parts))
 
 
 def guide_card(lang, k, g):
@@ -484,8 +521,10 @@ def build_guide(lang, k, g):
     path = gpath(k, g)
     check_faq(f"guide {k}", lang, g["faq"])
     n = gwords(g)
-    if n < (700 if lang == "en" else 550):
+    if n < ((700 if lang == "en" else 550) if g.get("kind") != "qa" else (330 if lang == "en" else 260)):
         WARN.append(f"thin guide {lang}/{k}: {n} words")
+    if g.get("answer") and not ((40 if lang == "en" else 30) <= words(g["answer"]) <= (60 if lang == "en" else 70)):
+        WARN.append(f"answer {words(g['answer'])} words {lang}/{k}")
     cat = G[lang].CATS[g["cat"]][0]
     ld = [org_ld(), site_ld(),
           {"@type": "Article", "@id": url(lang, path) + "#article", "headline": g["h1"], "description": g["desc"], "inLanguage": lang,
@@ -504,6 +543,7 @@ def build_guide(lang, k, g):
 <h1 style="margin-top:18px">{e(g['h1'])}</h1>
 <p class="muted">{e(gu['read_min'].format(n=max(3, round(n / 220))))} · {e(gu['updated'])}: {e(G[lang].DATE)}</p>
 <p class="lead">{md(g['lead'])}</p>
+{('<div class="answer"><b>' + e(gu.get('answer_h', 'Short answer')) + '</b><p>' + md(g['answer']) + '</p></div>') if g.get('answer') else ''}
 {tldr(ui, g['tldr'])}
 {secs}
 <section><div class="cta"><h2>{e(ch)}</h2><p>{e(cp)}</p>{stores(ui)}<p class="price">{e(ui['pricing'])}</p></div></section>
@@ -586,14 +626,19 @@ document.getElementById("qa").addEventListener("click",function(){r.hidden=true;
 
 
 def build_seo():
-    pages = [""] + [s + "/" for s, *_ in C.COACHES] + ["prompts/", "privacy/", "about/", "guides/", "read-next/"] + [gpath(k, g) for k, g in all_guides("en")]
+    gps = []
+    for lang in C.LANGS:
+        for k, g in all_guides(lang):
+            if gpath(k, g) not in gps:
+                gps.append(gpath(k, g))
+    pages = [""] + [s + "/" for s, *_ in C.COACHES] + ["prompts/", "privacy/", "about/", "guides/", "read-next/"] + gps
     out = ['<?xml version="1.0" encoding="UTF-8"?>',
            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
            f"<url><loc>{C.BASE}/</loc><lastmod>{MODIFIED}</lastmod></url>"]
     for p in pages:
-        alts = "".join(f'<xhtml:link rel="alternate" hreflang="{x}" href="{url(x, p)}"/>' for x in C.LANGS)
-        alts += f'<xhtml:link rel="alternate" hreflang="x-default" href="{C.BASE}/"/>'
-        for lang in C.LANGS:
+        alts = "".join(f'<xhtml:link rel="alternate" hreflang="{x}" href="{url(x, p)}"/>' for x in avail(p))
+        alts += f'<xhtml:link rel="alternate" hreflang="x-default" href="{xdefault(p)}"/>'
+        for lang in avail(p):
             out.append(f"<url><loc>{url(lang, p)}</loc><lastmod>{MODIFIED}</lastmod>{alts}</url>")
     out.append("</urlset>")
     write("sitemap.xml", "\n".join(out) + "\n")
