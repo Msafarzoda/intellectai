@@ -157,6 +157,7 @@ def head(lang, title, desc, path, ld, alts=True, og_lang=None, noindex=False):
 <meta property="og:locale" content="{ui['locale']}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0B1D2A">
+<meta name="msvalidate.01" content="D92BFF32C7F1100C522E700E7E8C8C42">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
