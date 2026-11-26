@@ -186,6 +186,7 @@ def head(lang, title, desc, path, ld, alts=True, og_lang=None, noindex=False):
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0B1D2A">
 <meta name="msvalidate.01" content="D92BFF32C7F1100C522E700E7E8C8C42">
+<meta name="yandex-verification" content="c8263807e2781cdf">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32">
