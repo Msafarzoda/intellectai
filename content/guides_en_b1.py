@@ -95,7 +95,7 @@ GUIDES = {
         ("Which book summary app is best for Arabic or Russian?",
          "For Arabic, the main options are Arabic-first apps like Wajeez, bilingual Arabic-English apps like Durar and Ejaz, and Zehn, which has an Arabic library plus AI. For Russian, Smart Reading and SummaryLib are Russian services, and Zehn has a Russian library. Our language-specific lists compare them in detail."),
     ],
-    related=["book-summary-apps-for-non-english-speakers", "best-arabic-book-summary-apps", "best-russian-book-summary-apps"],
+    related=["best-hindi-book-summary-apps", "best-urdu-book-summary-apps", "best-arabic-book-summary-apps", "best-russian-book-summary-apps"],
 ),
 "best-arabic-book-summary-apps": dict(
     cat="summary-apps",
@@ -269,7 +269,7 @@ GUIDES = {
         ("Do non-English libraries have the same books?",
          "Usually not. Most apps have their largest library in their main language and fewer titles in others. Before subscribing, search for three books you want in your language, not in English. Local-first apps often include regional authors that international apps don't have."),
     ],
-    related=["best-book-summary-apps", "best-arabic-book-summary-apps", "best-russian-book-summary-apps"],
+    related=["best-hindi-book-summary-apps", "best-urdu-book-summary-apps", "best-arabic-book-summary-apps", "best-russian-book-summary-apps"],
 ),
 # ------------------------------------------------------------------ question pages
 "is-there-a-book-summary-app-in-arabic": dict(

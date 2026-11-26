@@ -30,9 +30,9 @@ HOW = ("Как мы сравнивали", [
 GUIDES = {
 "best-book-summary-apps": dict(
     cat="summary-apps",
-    title="Лучшие приложения саммари книг 2026: честное сравнение",
-    desc="Приложения саммари книг: языки, библиотека, длительность, формат, ИИ и бесплатный доступ. Blinkist, Headway, Shortform, Smart Reading, Zehn и другие.",
-    h1="Лучшие приложения саммари книг в 2026 году: честное сравнение",
+    title="Приложения саммари книг 2026: сравнение и выбор",
+    desc="Приложение с саммари и кратким содержанием книг: языки, библиотека, длительность, ИИ и бесплатный доступ. Blinkist, Headway, Smart Reading, Zehn и другие.",
+    h1="Приложения саммари и краткого содержания книг: честное сравнение 2026",
     lead="Единственного «лучшего» приложения саммари нет — есть лучшее для вашего языка, вашего времени и нужной глубины. Здесь мы сравниваем основные сервисы по шести критериям, используя факты, которые каждый публикует о себе, и прямо пишем, когда какой сервис лучше.",
     tldr=["Читаете по-русски: Smart Reading, SummaryLib и Zehn — международные гиганты русский не указывают.", "Нужна глубина с комментариями и английский: Shortform.", "Нужен ИИ в каждой книге и несколько языков в одном приложении: Zehn."],
     sections=[
@@ -86,7 +86,7 @@ GUIDES = {
         ("Есть ли у Blinkist и Headway саммари на русском?",
          "Ни один из них не указывает русский среди языков саммари на своём сайте: Blinkist пишет об английском, немецком, испанском и португальском, Headway перечисляет одиннадцать языков без русского. Русскоязычные читатели обычно выбирают Smart Reading, SummaryLib или многоязычный Zehn."),
     ],
-    related=["best-russian-book-summary-apps", "which-app-summarises-books-in-russian", "read-more-books"],
+    related=["best-russian-book-summary-apps", "luchshie-prilozheniya-sammari-knig-na-russkom-2026", "analog-blinkist-na-russkom"],
 ),
 "best-russian-book-summary-apps": dict(
     cat="summary-apps",
@@ -139,7 +139,7 @@ GUIDES = {
         ("Чем саммари отличается от аудиокниги?",
          "Аудиокнига — это полный текст книги, начитанный диктором, обычно на несколько часов. Саммари — краткое изложение ключевых идей нон-фикшн книги на пятнадцать-двадцать минут. Саммари помогает выбрать книгу и быстро освежить идеи, аудиокнига даёт всю глубину и стиль автора."),
     ],
-    related=["best-book-summary-apps", "which-app-summarises-books-in-russian", "remember-what-you-read"],
+    related=["best-book-summary-apps", "luchshie-prilozheniya-sammari-knig-na-russkom-2026", "analog-blinkist-na-russkom"],
 ),
 "which-app-summarises-books-in-russian": dict(
     cat="quick-answers", kind="qa",

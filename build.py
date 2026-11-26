@@ -36,6 +36,10 @@ for _lang in C.LANGS:  # merge later batches: content/guides_<lang>_*.py (GUIDES
         G[_lang].CATS.update(getattr(_m, "CATS", {}))
         G[_lang].ZEHN.update(getattr(_m, "ZEHN", {}))
         G[_lang].UI.update(getattr(_m, "UI", {}))
+MINI = ["hi", "ur"]  # guides-only languages (no coaches/prompts): Hindi, Urdu (RTL)
+ZS = {"hi": "hindi", "ur": "urdu"}  # path of the Zehn landing for each
+for _m in MINI:
+    L[_m] = G[_m] = load(f"mini_{_m}")
 BOOKS = json.load(open(os.path.join(ROOT, "content", "books.json"), encoding="utf-8"))
 e = lambda s: html.escape(s, quote=True)  # noqa: E731
 SOCIAL = [("X", "https://x.com/thezehnapp"), ("Instagram", "https://www.instagram.com/thezehnapp/"), ("YouTube", "https://www.youtube.com/@thezehnapp")]
@@ -63,16 +67,16 @@ def all_guides(lang):
 
 def avail(path):
     """Languages a path exists in (guides can be single-language)."""
-    gp = {lang: {gpath(k, g) for k, g in all_guides(lang)} for lang in C.LANGS}
+    gp = {lang: {gpath(k, g) for k, g in all_guides(lang)} for lang in C.LANGS + MINI}
     allg = set().union(*gp.values())
     if path in allg:
-        return [x for x in C.LANGS if path in gp[x]]
+        return [x for x in C.LANGS + MINI if path in gp[x]]
     return list(C.LANGS)
 
 
 def xdefault(path):
     a = avail(path)
-    return f"{C.BASE}/" if len(a) == len(C.LANGS) else url("en" if "en" in a else a[0], path)
+    return f"{C.BASE}/" if a == list(C.LANGS) else url("en" if "en" in a else a[0], path)
 
 
 def url(lang, path=""):
@@ -102,6 +106,8 @@ FONTS = {
     "en": "family=Inter:wght@400;600;700&family=Manrope:wght@700;800",
     "ru": "family=Inter:wght@400;600;700&family=Manrope:wght@700;800",
     "ar": "family=Cairo:wght@400;600;700;800",
+    "hi": "family=Noto+Sans+Devanagari:wght@400;600;700;800",
+    "ur": "family=Noto+Nastaliq+Urdu:wght@400;600;700",
 }
 LOGO = ('<svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#0B1D2A"/>'
         '<circle cx="16" cy="9.5" r="2.6" fill="#3DDC97"/><path d="M16 14.5v9" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/>'
@@ -123,7 +129,7 @@ def org_ld():
 
 def site_ld():
     return {"@type": "WebSite", "@id": SITE_ID, "name": "Intellect AI", "url": C.BASE + "/",
-            "inLanguage": C.LANGS, "publisher": {"@id": ORG_ID}}
+            "inLanguage": C.LANGS + MINI, "publisher": {"@id": ORG_ID}}
 
 
 def zehn_ld(lang):
@@ -152,12 +158,12 @@ def head(lang, title, desc, path, ld, alts=True, og_lang=None, noindex=False):
     check_meta(f"{lang}/{path}", title, desc)
     canon = url(lang, path)
     ui = L[lang or "en"].UI
-    d = "rtl" if lang == "ar" else "ltr"
+    d = "rtl" if lang in ("ar", "ur") else "ltr"
     alt = ""
     if alts:
         alt = "".join(f'<link rel="alternate" hreflang="{x}" href="{url(x, path)}">' for x in avail(path))
         alt += f'<link rel="alternate" hreflang="x-default" href="{xdefault(path)}">'
-    og = f"{C.BASE}/og/og-{og_lang or lang or 'en'}.jpg"
+    og = f"{C.BASE}/og/og-{og_lang or (lang if lang in C.LANGS else 'en')}.jpg"
     fl = FONTS[lang or "en"]
     return f"""<!doctype html>
 <html lang="{lang or 'en'}" dir="{d}">
@@ -196,10 +202,39 @@ def head(lang, title, desc, path, ld, alts=True, og_lang=None, noindex=False):
 <a class="skip" href="#main">{e(ui['skip'])}</a>"""
 
 
-def header(lang, path):
+def header_mini(lang, path):
     ui = L[lang].UI
     av = avail(path)
-    langs = "".join(f'<a href="/{x}/{path if x in av else ""}" hreflang="{x}" lang="{x}"{" aria-current=\"true\"" if x == lang else ""}>{x.upper()}</a>' for x in C.LANGS)
+    langs = "".join(f'<a href="/{x}/{path if x in av else ""}" hreflang="{x}" lang="{x}"{" aria-current=\"true\"" if x == lang else ""}>{x.upper()}</a>' for x in ["en"] + [m for m in MINI if m in av or m == lang])
+    return f"""<header class="top"><div class="wrap">
+<a class="brand" href="/{lang}/" aria-label="Intellect AI">{LOGO}<span>Intellect AI</span></a>
+<nav class="nav" aria-label="{e(ui['menu_label'])}">
+<a href="/{lang}/">{e(ui['nav_guides'])}</a>
+<span class="langs" aria-label="{e(ui['lang_label'])}">{langs}</span>
+<a class="get hide-s" href="{C.ZEHN}/{ZS[lang]}/">{e(ui['nav_get'])}</a>
+</nav></div></header>
+<main id="main">"""
+
+
+def footer_mini(lang):
+    ui = L[lang].UI
+    soc = "".join(f'<li><a href="{u}" rel="noopener">{n}</a></li>' for n, u in SOCIAL)
+    return f"""</main>
+<footer><div class="wrap">
+<div><a class="brand" href="/{lang}/" aria-label="Intellect AI">{LOGO}Intellect AI</a><p style="margin-top:10px">{e(ui['footer_about'])}</p>
+<p><a href="mailto:{C.EMAIL}">{C.EMAIL}</a></p><b style="margin-top:14px">{e(ui['social_h'])}</b><ul class="soc">{soc}</ul></div>
+<div><b>{e(ui['footer_links'])}</b><ul><li><a href="/{lang}/">{e(ui['nav_guides'])}</a></li><li><a href="/en/">English</a></li><li><a href="/ru/">Русский</a></li><li><a href="/ar/">العربية</a></li><li><a href="{C.ZEHN}/{ZS[lang]}/">Zehn</a></li></ul></div>
+<div class="copy">{e(ui['footer_brand'])} · © 2026</div>
+</div></footer>
+</body></html>"""
+
+
+def header(lang, path):
+    if lang in MINI:
+        return header_mini(lang, path)
+    ui = L[lang].UI
+    av = avail(path)
+    langs = "".join(f'<a href="/{x}/{path if x in av else ""}" hreflang="{x}" lang="{x}"{" aria-current=\"true\"" if x == lang else ""}>{x.upper()}</a>' for x in C.LANGS + [m for m in MINI if m in av])
     return f"""<header class="top"><div class="wrap">
 <a class="brand" href="/{lang}/" aria-label="Intellect AI">{LOGO}<span>Intellect AI</span></a>
 <nav class="nav" aria-label="{e(ui['menu_label'])}">
@@ -213,6 +248,8 @@ def header(lang, path):
 
 
 def footer(lang):
+    if lang in MINI:
+        return footer_mini(lang)
     ui = L[lang].UI
     co = L[lang].COACHES
     gu = G[lang].UI
@@ -506,6 +543,21 @@ def guide_card(lang, k, g):
             f'<p>{e(g["desc"])}</p><span class="more">{e(gu["read_min"].format(n=max(3, round(gwords(g) / 220))))} →</span></a>')
 
 
+SUMMARY_LINKS = {  # home page: book summary apps by language (label, lang, path)
+    "en": ("Book summary apps in your language", [("Arabic", "en", "guides/best-arabic-book-summary-apps/"), ("Russian", "en", "guides/best-russian-book-summary-apps/"),
+           ("Hindi", "en", "guides/best-hindi-book-summary-apps/"), ("Urdu", "en", "guides/best-urdu-book-summary-apps/"), ("हिन्दी", "hi", ""), ("اردو", "ur", "")]),
+    "ru": ("Приложения саммари по языкам", [("На русском", "ru", "guides/best-russian-book-summary-apps/"), ("Есть ли приложение с саммари на русском", "ru", "guides/est-li-prilozhenie-sammari-knig-na-russkom/"),
+           ("Аналог Blinkist на русском", "ru", "guides/analog-blinkist-na-russkom/"), ("Все приложения саммари", "ru", "guides/best-book-summary-apps/")]),
+    "ar": ("تطبيقات ملخصات الكتب بلغتك", [("العربية", "ar", "guides/best-arabic-book-summary-apps/"), ("كل التطبيقات", "ar", "guides/best-book-summary-apps/"),
+           ("हिन्दी", "hi", ""), ("اردو", "ur", "")]),
+}
+
+
+def lang_links(lang):
+    h, items = SUMMARY_LINKS[lang]
+    return f'<p style="margin-top:14px"><b>{e(h)}:</b> ' + " · ".join(f'<a href="/{l}/{p}">{e(n)}</a>' for n, l, p in items) + "</p>"
+
+
 def home_guides(lang):
     gu, q = G[lang].UI, G[lang].QUIZ
     picks = ["read-more-books", "how-to-start-a-book-club", "learn-a-language-with-ai", "what-is-zehn", "remember-what-you-read"]
@@ -514,7 +566,7 @@ def home_guides(lang):
     quiz = (f'<a class="card quizcard" href="/{lang}/read-next/"><span class="kicker">Quiz</span><h3>{e(q["h1"])}</h3>'
             f'<p>{e(q["lead"])}</p><span class="more">{e(q["show"])} →</span></a>')
     return f"""<section class="alt"><div class="wrap"><h2>{e(gu['home_guides_h'])}</h2><p class="lead">{e(gu['home_guides_p'])}</p>
-<div class="grid">{quiz}{cards}</div><p style="margin-top:18px"><a href="/{lang}/guides/">{e(gu['all_guides'])} →</a></p></div></section>"""
+<div class="grid">{quiz}{cards}</div><p style="margin-top:18px"><a href="/{lang}/guides/">{e(gu['all_guides'])} →</a></p>{lang_links(lang)}</div></section>"""
 
 
 def build_guide(lang, k, g):
@@ -529,18 +581,19 @@ def build_guide(lang, k, g):
     cat = G[lang].CATS[g["cat"]][0]
     ld = [org_ld(), site_ld(),
           {"@type": "Article", "@id": url(lang, path) + "#article", "headline": g["h1"], "description": g["desc"], "inLanguage": lang,
-           "url": url(lang, path), "mainEntityOfPage": url(lang, path), "image": f"{C.BASE}/og/og-{lang}.jpg", "wordCount": n,
+           "url": url(lang, path), "mainEntityOfPage": url(lang, path), "image": f"{C.BASE}/og/og-{lang if lang in C.LANGS else 'en'}.jpg", "wordCount": n,
            "datePublished": g.get("date", PUBLISHED), "dateModified": g.get("date", MODIFIED), "author": {"@id": ORG_ID}, "publisher": {"@id": ORG_ID},
            "isPartOf": {"@id": SITE_ID}, "articleSection": cat, **({"about": zehn_ld(lang)} if g["cat"] == "zehn-guides" else {})},
           faq_ld(g["faq"]),
-          crumbs_ld([(ui["home"], url(lang)), (gu["nav_guides"], url(lang, "guides/")), (g["h1"], url(lang, path))])]
+          crumbs_ld([(ui["home"], url(lang)), (gu["nav_guides"], url(lang) if lang in MINI else url(lang, "guides/")), (g["h1"], url(lang, path))])]
+    hub = f"/{lang}/" if lang in MINI else f"/{lang}/guides/"
     secs = "".join(f'<section><h2>{e(h)}</h2>{blocks(lang, bl)}</section>' for h, bl in g["sections"])
     faq = "".join(f"<h3>{e(q)}</h3><p>{md(a)}</p>" for q, a in g["faq"])
     ch, cp = g.get("cta") or (gu["cta_default_h"], gu["cta_default_p"])
     ag = dict(all_guides(lang))
     rel = "".join(guide_card(lang, r, ag[r]) for r in g["related"] if r in ag)
     body = f"""<div class="wrap narrow page">
-<nav class="crumbs" aria-label="breadcrumb"><ol><li><a href="/{lang}/">{e(ui['home'])}</a></li><li><a href="/{lang}/guides/#{g['cat']}">{e(cat)}</a></li><li aria-current="page">{e(g['h1'])}</li></ol></nav>
+<nav class="crumbs" aria-label="breadcrumb"><ol><li><a href="/{lang}/">{e(ui['home'])}</a></li><li><a href="{hub}#{g['cat']}">{e(cat)}</a></li><li aria-current="page">{e(g['h1'])}</li></ol></nav>
 <h1 style="margin-top:18px">{e(g['h1'])}</h1>
 <p class="muted">{e(gu['read_min'].format(n=max(3, round(n / 220))))} · {e(gu['updated'])}: {e(g.get('date_h', G[lang].DATE))}</p>
 <p class="lead">{md(g['lead'])}</p>
@@ -574,6 +627,27 @@ def build_guides_index(lang):
 <h1 style="margin-top:18px">{e(gu['guides_h1'])}</h1><p class="lead">{e(gu['guides_lead'])}</p>{tldr(ui, gu['guides_tldr'])}
 {secs}</div>"""
     write(f"{lang}/{path}index.html", head(lang, gu["guides_title"], gu["guides_desc"], path, ld) + header(lang, path) + body + footer(lang))
+
+
+def build_mini_home(lang):
+    ui, gu, h = L[lang].UI, G[lang].UI, L[lang].HUB
+    gs = all_guides(lang)
+    ld = [org_ld(), site_ld(),
+          {"@type": "CollectionPage", "url": url(lang), "name": h["h1"], "description": h["desc"], "inLanguage": lang, "isPartOf": {"@id": SITE_ID},
+           "hasPart": [{"@type": "Article", "url": url(lang, gpath(k, g)), "headline": g["h1"]} for k, g in gs]},
+          faq_ld(h["faq"])]
+    check_faq(f"{lang} hub", lang, h["faq"])
+    secs = ""
+    for ck, (cn, cd) in G[lang].CATS.items():
+        cards = "".join(guide_card(lang, k, g) for k, g in gs if g["cat"] == ck)
+        secs += f'<section id="{ck}"><h2>{e(cn)}</h2><p class="muted">{e(cd)}</p><div class="grid g2">{cards}</div></section>'
+    faq = "".join(f"<h3>{e(q)}</h3><p>{md(a)}</p>" for q, a in h["faq"])
+    body = f"""<div class="wrap page" style="max-width:980px">
+<h1>{e(h['h1'])}</h1><p class="lead">{e(h['lead'])}</p>{tldr(ui, h['tldr'])}
+{secs}
+<section><div class="cta"><h2>{e(gu['cta_default_h'])}</h2><p>{e(gu['cta_default_p'])}</p>{stores(ui)}<p class="price">{e(ui['pricing'])}</p></div></section>
+<section class="faq"><h2>{e(ui['faq_h'])}</h2>{faq}</section></div>"""
+    write(f"{lang}/index.html", head(lang, h["title"], h["desc"], "", ld, alts=False) + header(lang, "") + body + footer(lang))
 
 
 def build_about(lang):
@@ -788,7 +862,7 @@ def build_printables(lang):
 
 def build_rss():
     import email.utils as eu, datetime as dt
-    for lang in C.LANGS:
+    for lang in C.LANGS + MINI:
         items = []
         for k, g in all_guides(lang):
             d = g.get("date", PUBLISHED)
@@ -802,7 +876,7 @@ def build_rss():
 
 def build_seo():
     gps = []
-    for lang in C.LANGS:
+    for lang in C.LANGS + MINI:
         for k, g in all_guides(lang):
             if gpath(k, g) not in gps:
                 gps.append(gpath(k, g))
@@ -815,6 +889,8 @@ def build_seo():
         alts += f'<xhtml:link rel="alternate" hreflang="x-default" href="{xdefault(p)}"/>'
         for lang in avail(p):
             out.append(f"<url><loc>{url(lang, p)}</loc><lastmod>{MODIFIED}</lastmod>{alts}</url>")
+    for m in MINI:
+        out.append(f"<url><loc>{url(m)}</loc><lastmod>{MODIFIED}</lastmod></url>")
     out.append("</urlset>")
     write("sitemap.xml", "\n".join(out) + "\n")
     bots = ["GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-SearchBot", "Claude-User", "PerplexityBot", "Perplexity-User",
@@ -833,6 +909,11 @@ def build_seo():
     lines += ["", "## Guides (English)"]
     for k, g in all_guides("en"):
         lines.append(f"- [{g['h1']}]({url('en', gpath(k, g))}): {g['desc']}")
+    lines += ["", "## Hindi and Urdu book summary apps"]
+    for m in MINI:
+        lines.append(f"- [{L[m].HUB['h1']}]({url(m)})")
+        for k, g in all_guides(m):
+            lines.append(f"- [{g['h1']}]({url(m, gpath(k, g))}): {g['desc']}")
     lines += ["", "## Other pages", f"- [All prompts]({url('en', 'prompts/')}): 108 free prompts, 12 per coach",
               f"- [What should I read next? quiz]({url('en', 'read-next/')}): 3 questions, 3 book picks from Zehn's library",
               f"- [About Intellect AI]({url('en', 'about/')})",
@@ -941,6 +1022,10 @@ def main():
         build_quiz(lang)
         build_tools(lang)
         build_printables(lang)
+    for m in MINI:
+        build_mini_home(m)
+        for k, g in all_guides(m):
+            build_guide(m, k, g)
     build_root()
     build_404()
     build_seo()

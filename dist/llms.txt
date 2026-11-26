@@ -36,9 +36,21 @@ The AI Psychologist and Mindfulness Guide are self-help tools, not therapy or me
 - [Is there an app to discuss books with other readers?](https://intellectai.app/en/guides/app-to-discuss-books-with-other-readers/): Yes: reading communities, book club apps and summary apps with discussion features. Which kind fits you, and how Zehn's Book Club tab works.
 - [The 52 books in 2027 challenge](https://intellectai.app/en/guides/52-books-in-2027/): Join the 52 books in 2027 reading challenge: a month-by-month theme plan, the Friday finish rhythm, a free tracker and a printable sheet. Start 1 January.
 - [How people read in 2026: Arab, Russian and English-speaking readers](https://intellectai.app/en/guides/reading-statistics/): How much do people read in 2026? Cited figures for Arab, Russian, US and UK readers from the Arab Reading Index, VTsIOM, Pew, the NLT and UNESCO.
+- [Best Hindi book summary apps in 2026: an honest comparison](https://intellectai.app/en/guides/best-hindi-book-summary-apps/): Hindi book summary apps compared: Yebook, Saarika AI, GIGL, SoBrief and Zehn, plus Hindi audiobook apps. Length, free access and AI, from their sites.
+- [Best Urdu book summary apps in 2026: an honest comparison](https://intellectai.app/en/guides/best-urdu-book-summary-apps/): Urdu book summary and audio book apps compared: Urdunya, SoBrief and Zehn, plus Rekhta and Kafka for full books. Length and free access, from their sites.
+- [Is there a book summary app in Hindi?](https://intellectai.app/en/guides/is-there-a-book-summary-app-in-hindi/): Yes: Yebook, Saarika AI, GIGL, SoBrief and Zehn offer Hindi book summaries. Which fit audio, free use or an AI chat, in two minutes.
+- [Is there a book summary app in Urdu?](https://intellectai.app/en/guides/is-there-a-book-summary-app-in-urdu/): Yes: Urdunya, SoBrief and Zehn offer Urdu book summaries; Rekhta and Kafka have full Urdu books. Which fits you, in two minutes.
 - [What is Zehn?](https://intellectai.app/en/zehn/): What Zehn is, who makes it and what it does: 15–20 minute book summaries, Ask AI on every book, an AI Chat with coaches, Book Club, languages and plans.
 - [How Zehn makes your day easier](https://intellectai.app/en/zehn/daily/): Seven everyday moments where Zehn helps: the commute, lunch, a meeting, a hard conversation, language practice, Sunday planning and winding down.
 - [The Zehn Book Club, explained](https://intellectai.app/en/zehn/book-club/): How the Book Club tab in the Zehn app works: join topic clubs, post your take on a book, reply to other readers and take part in club challenges.
+
+## Hindi and Urdu book summary apps
+- [हिंदी में किताबों के सारांश और ऑडियो ऐप](https://intellectai.app/hi/)
+- [हिंदी में बुक समरी ऐप 2026: निष्पक्ष तुलना](https://intellectai.app/hi/guides/best-hindi-book-summary-apps/): हिंदी बुक समरी ऐप की तुलना: Yebook, Saarika AI, GIGL, SoBrief, Zehn और Kuku FM। भाषा, लंबाई, फ्री विकल्प और AI, उनकी अपनी साइटों से।
+- [क्या हिंदी में बुक समरी ऐप है?](https://intellectai.app/hi/guides/is-there-a-book-summary-app-in-hindi/): हाँ: Yebook, Saarika AI, GIGL, SoBrief और Zehn हिंदी में किताबों के सारांश देते हैं। कौन-सा किसके लिए ठीक है, दो मिनट में।
+- [اردو میں کتابوں کے خلاصے اور آڈیو ایپس](https://intellectai.app/ur/)
+- [اردو بک سمری ایپس 2026: غیر جانبدار موازنہ](https://intellectai.app/ur/guides/best-urdu-book-summary-apps/): اردو کتابوں کے خلاصے اور آڈیو بکس کی ایپس کا موازنہ: Urdunya، SoBrief، Zehn، اور مکمل کتابوں کے لیے Rekhta اور Kafka۔ ان کی اپنی سائٹس سے۔
+- [کیا اردو میں بک سمری ایپ ہے؟](https://intellectai.app/ur/guides/is-there-a-book-summary-app-in-urdu/): جی ہاں: Urdunya، SoBrief اور Zehn اردو خلاصے دیتی ہیں؛ Rekhta اور Kafka میں مکمل کتابیں ہیں۔ آپ کے لیے کون سی، دو منٹ میں۔
 
 ## Other pages
 - [All prompts](https://intellectai.app/en/prompts/): 108 free prompts, 12 per coach
